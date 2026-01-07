@@ -51,8 +51,8 @@ export function drawPlanetGlyphs(
 ): string {
   let svg = '<g id="planet-glyphs">';
 
-  // Use 9 degrees for robust separation including labels
-  const adjusted = resolveCollisions(planets, houses, 5, 4);
+  // Use user-preferred settings: 6 distance, 4 cusp buffer
+  const adjusted = resolveCollisions(planets, houses, 6, 4);
 
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
@@ -62,33 +62,37 @@ export function drawPlanetGlyphs(
     const symPos = polarToCartesian(cx, cy, radius - 65, adj.adjustedLongitude, rotationOffset);
     const markerStartPos = polarToCartesian(cx, cy, radius - 40, adj.originalLongitude, rotationOffset);
 
-    // Vector for margin
+    // FIXED LENGTH TICK LOGIC
     const dx = symPos.x - markerStartPos.x;
     const dy = symPos.y - markerStartPos.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const margin = 15; 
-    const ratio = Math.max(0, (dist - margin) / dist);
-    const markerEndPos = { x: markerStartPos.x + dx * ratio, y: markerStartPos.y + dy * ratio };
+    
+    // Make the line exactly 10px long, pointing towards the symbol
+    const lineLength = 10;
+    const ratio = lineLength / dist;
+    
+    const markerEndPos = { 
+        x: markerStartPos.x + dx * ratio, 
+        y: markerStartPos.y + dy * ratio 
+    };
 
-    // Marker Line
+    // Draw the 10px tick
     svg += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
                   x2="${markerEndPos.x}" y2="${markerEndPos.y}" 
                   stroke="var(--astro-color-text)" stroke-width="0.8" stroke-opacity="0.4" />`;
 
-    // Planet Symbol
+    // Symbol
     svg += `<text x="${symPos.x}" y="${symPos.y}" 
                   fill="${color}" 
                   font-size="20" 
                   text-anchor="middle" 
                   dominant-baseline="central">${char}</text>`;
     
-    // Mean/True labels
     if (planet.id.includes('Mean') || planet.id.includes('True')) {
         const indicator = planet.id.includes('Mean') ? 'm' : 't';
         svg += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" fill="${color}" font-size="8">${indicator}</text>`;
     }
 
-    // Degree Text
     const textPos = polarToCartesian(cx, cy, radius - 85, adj.adjustedLongitude, rotationOffset);
     svg += `<text x="${textPos.x}" y="${textPos.y}" 
                   fill="var(--astro-color-text)" font-size="8" 

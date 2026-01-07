@@ -1,0 +1,5 @@
+node_modules
+dist
+chart.svg
+*.log
+.DS_Store

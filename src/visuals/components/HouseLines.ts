@@ -11,7 +11,7 @@ export function drawHouseLines(
   let svg = '<g id="house-lines">';
 
   // Draw the house ring circle
-  svg += `<circle cx="${cx}" cy="${cy}" r="${radius * 0.4}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${radius * 0.5}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`;
 
   houses.forEach((house, i) => {
     const nextHouse = houses[(i + 1) % houses.length];
@@ -35,7 +35,7 @@ export function drawHouseLines(
     let midLong = (house.longitude + nextHouse.longitude) / 2;
     if (nextHouse.longitude < house.longitude) midLong += 180;
     
-    const textPos = polarToCartesian(cx, cy, radius * 0.32, midLong, rotationOffset);
+    const textPos = polarToCartesian(cx, cy, radius * 0.45, midLong, rotationOffset);
     
     svg += `<text x="${textPos.x}" y="${textPos.y}" 
                   fill="var(--astro-color-text)" 

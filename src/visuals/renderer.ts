@@ -51,7 +51,7 @@ export function renderChart(chart: ChartData, options: RenderOptions = {}): stri
   svgParts.push(drawHouseLines(cx, cy, radius, chart.houses, rotationOffset));
   
   // Foreground center circle (The "Empty" space in the middle)
-  svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${radius * 0.3}" fill="${theme.paperColor}" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`);
+  svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${radius * 0.4}" fill="${theme.paperColor}" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`);
   
   if (options.showAspects !== false) {
     svgParts.push(drawAspectLines(cx, cy, radius, chart.aspects, rotationOffset));

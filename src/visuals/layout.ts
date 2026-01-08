@@ -1,9 +1,7 @@
 /**
  * Centralized Geometric Configuration for Chart Components.
- * All values are relative to the main radius (R).
  */
 export interface ChartLayout {
-  // Total Radius
   radius: number;
 
   // Outer Ring (Zodiac)
@@ -11,44 +9,49 @@ export interface ChartLayout {
   zodiacInner: number;
   zodiacSymbol: number;
 
+  // Degree Scale (Ticks)
+  degreeRing: number;
+  degreeTickSmall: number;
+  degreeTickMedium: number;
+  degreeTickLarge: number;
+
   // Mid Ring (Planets)
   planetSymbol: number;
   planetDegree: number;
-  planetTickStart: number; // Usually same as zodiacInner
+  planetTickStart: number;
   planetTickLength: number;
 
   // Inner Ring (Houses)
   houseRing: number;
   houseText: number;
+  angleLabelRadius: number;
 
   // Center (Aspects)
   aspectBoundary: number;
 }
 
-/**
- * Computes the absolute pixel values for the layout.
- * We can tweak the logic here to change the "proportions" of the entire library.
- */
 export function computeLayout(mainRadius: number): ChartLayout {
   return {
     radius: mainRadius,
     
-    // Zodiac occupies the outer 40px
     zodiacOuter: mainRadius,
-    zodiacInner: mainRadius - 40,
-    zodiacSymbol: mainRadius - 20,
+    zodiacInner: mainRadius - 45, // Slightly wider for ticks
+    zodiacSymbol: mainRadius - 22,
 
-    // Planets sit inside the zodiac
-    planetSymbol: mainRadius - 65,
-    planetDegree: mainRadius - 85,
-    planetTickStart: mainRadius - 40,
+    degreeRing: mainRadius - 45,
+    degreeTickSmall: 3,
+    degreeTickMedium: 6,
+    degreeTickLarge: 10,
+
+    planetSymbol: mainRadius - 75,
+    planetDegree: mainRadius - 95,
+    planetTickStart: mainRadius - 45,
     planetTickLength: 10,
 
-    // House structure (using your self-corrected percentages)
     houseRing: mainRadius * 0.5,
     houseText: mainRadius * 0.45,
+    angleLabelRadius: mainRadius * 0.45, // Moved inward
 
-    // Aspects stay in the core
     aspectBoundary: mainRadius * 0.4
   };
 }

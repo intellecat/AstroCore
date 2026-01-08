@@ -2,6 +2,7 @@ import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId, HouseCusp } from '../../core/types.js';
 import { resolveCollisions } from '../collision.js';
 import { ChartLayout } from '../layout.js';
+import { MarkerRenderer, drawLineMarker } from './Markers.js';
 
 const UNICODE_MAP: Record<string, string> = {
   [BodyId.Sun]: '☉',
@@ -48,7 +49,8 @@ export function drawPlanetGlyphs(
   planets: CelestialPosition[],
   houses: HouseCusp[],
   rotationOffset: number,
-  layout: ChartLayout
+  layout: ChartLayout,
+  markerRenderer: MarkerRenderer = drawLineMarker
 ): string {
   let svg = '<g id="planet-glyphs">';
 
@@ -62,23 +64,8 @@ export function drawPlanetGlyphs(
     const symPos = polarToCartesian(cx, cy, layout.planetSymbol, adj.adjustedLongitude, rotationOffset);
     const markerStartPos = polarToCartesian(cx, cy, layout.planetTickStart, adj.originalLongitude, rotationOffset);
 
-    // Calculate fixed length tick
-    const dx = symPos.x - markerStartPos.x;
-    const dy = symPos.y - markerStartPos.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    const ratio = layout.planetTickLength / dist;
-
-    const markerEndPos = {
-      x: markerStartPos.x + dx * ratio,
-      y: markerStartPos.y + dy * ratio,
-    };
-
-    // Draw the sloping marker line
-    svg += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
-                  x2="${markerEndPos.x}" y2="${markerEndPos.y}" 
-                  stroke="var(--astro-color-text)" 
-                  stroke-width="0.8" 
-                  stroke-opacity="0.4" />`;
+    // Use the abstracted marker renderer
+    svg += markerRenderer(markerStartPos, symPos, layout);
 
     // Planet Symbol
     svg += `<text x="${symPos.x}" y="${symPos.y}" 
@@ -87,7 +74,7 @@ export function drawPlanetGlyphs(
                   text-anchor="middle" 
                   dominant-baseline="central">${char}</text>`;
 
-    // m/t indicators for Mean/True points
+    // m/t indicators
     if (planet.id.includes('Mean') || planet.id.includes('True')) {
       const indicator = planet.id.includes('Mean') ? 'm' : 't';
       svg += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" fill="${color}" font-size="8">${indicator}</text>`;

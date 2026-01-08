@@ -32,6 +32,33 @@ export function drawHouseLines(
                   stroke-opacity="${opacity}" 
                   stroke-dasharray="${isAngle ? '' : '3,3'}" />`;
 
+    // ANGLE LABELS (ASC, MC, etc) - INSIDE THE WHEEL
+    if (isAngle) {
+        let label = '';
+        switch(house.house) {
+            case 1: label = 'ASC'; break;
+            case 4: label = 'IC'; break;
+            case 7: label = 'DSC'; break;
+            case 10: label = 'MC'; break;
+        }
+        
+        const labelPos = polarToCartesian(cx, cy, layout.angleLabelRadius, house.longitude, rotationOffset);
+        svg += `<text x="${labelPos.x}" y="${labelPos.y}" 
+                      fill="var(--astro-color-text)" 
+                      font-size="7" font-weight="bold"
+                      text-anchor="middle" dominant-baseline="middle" 
+                      opacity="0.6">${label}</text>`;
+        
+        // Add degree next to label (even smaller)
+        // const degPos = polarToCartesian(cx, cy, layout.angleLabelRadius - 10, house.longitude, rotationOffset);
+        // svg += `<text x="${degPos.x}" y="${degPos.y}" 
+        //               fill="var(--astro-color-text)" 
+        //               font-size="6"
+        //               text-anchor="middle" dominant-baseline="middle" 
+        //               opacity="0.4">${Math.floor(house.degree)}°</text>`;
+    }
+
+    // House Number
     let midLong = (house.longitude + nextHouse.longitude) / 2;
     if (nextHouse.longitude < house.longitude) midLong += 180;
     

@@ -7,12 +7,15 @@ import { drawZodiacWheel } from './components/ZodiacWheel.js';
 import { drawHouseLines } from './components/HouseLines.js';
 import { drawPlanetGlyphs } from './components/PlanetGlyphs.js';
 import { drawAspectLines } from './components/AspectLines.js';
+import { drawDegreeRings } from './components/DegreeRings.js';
+import { MarkerRenderer } from './components/Markers.js';
 
 export interface RenderOptions {
   width?: number;
   height?: number;
   theme?: Theme;
   showAspects?: boolean;
+  markerRenderer?: MarkerRenderer;
 }
 
 export function renderChart(chart: ChartData, options: RenderOptions = {}): string {
@@ -23,7 +26,6 @@ export function renderChart(chart: ChartData, options: RenderOptions = {}): stri
   const cy = height / 2;
   const radius = Math.min(width, height) * 0.45;
 
-  // 1. COMPUTE SYSTEMATIC LAYOUT
   const layout = computeLayout(radius);
 
   const rotationOffset = getAscendantOffset(chart.angles.Asc);
@@ -46,21 +48,21 @@ export function renderChart(chart: ChartData, options: RenderOptions = {}): stri
   svgParts.push(SVG_SYMBOLS);
   svgParts.push('</defs>');
 
-  // 2. Render Components using Layout Config
+  // Render Components
   svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${layout.radius}" fill="${theme.paperColor}" />`);
   
   svgParts.push(drawZodiacWheel(cx, cy, rotationOffset, layout));
+  svgParts.push(drawDegreeRings(cx, cy, rotationOffset, layout));
   svgParts.push(drawHouseLines(cx, cy, chart.houses, rotationOffset, layout));
   
-  // Foreground center circle (Inside the house number ring)
-  // We can make this dynamic too: 0.8 * layout.aspectBoundary or similar
-  svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${layout.aspectBoundary * 1}" fill="${theme.paperColor}" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`);
+  // Foreground center circle - Aligned exactly with aspectBoundary
+  svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${layout.aspectBoundary}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`);
   
   if (options.showAspects !== false) {
     svgParts.push(drawAspectLines(cx, cy, chart.aspects, rotationOffset, layout));
   }
   
-  svgParts.push(drawPlanetGlyphs(cx, cy, chart.bodies, chart.houses, rotationOffset, layout));
+  svgParts.push(drawPlanetGlyphs(cx, cy, chart.bodies, chart.houses, rotationOffset, layout, options.markerRenderer));
 
   // Footer
   svgParts.push('</svg>');

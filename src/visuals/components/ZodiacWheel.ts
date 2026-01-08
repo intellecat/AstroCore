@@ -1,30 +1,30 @@
 import { polarToCartesian } from '../geometry.js';
 import { ZODIAC_SIGNS } from '../../core/types.js';
+import { ChartLayout } from '../layout.js';
 
 export function drawZodiacWheel(
   cx: number,
   cy: number,
-  radius: number,
-  rotationOffset: number
+  rotationOffset: number,
+  layout: ChartLayout
 ): string {
   let svg = '<g id="zodiac-wheel">';
 
-  // Draw Background Circles
-  svg += `<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.2" />`;
-  svg += `<circle cx="${cx}" cy="${cy}" r="${radius - 40}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.2" />`;
+  // Use layout radii for the rings
+  svg += `<circle cx="${cx}" cy="${cy}" r="${layout.zodiacOuter}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.2" />`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${layout.zodiacInner}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.2" />`;
 
   for (let i = 0; i < 12; i++) {
     const angle = i * 30;
     const sign = ZODIAC_SIGNS[i];
     
-    const p1 = polarToCartesian(cx, cy, radius, angle, rotationOffset);
-    const p2 = polarToCartesian(cx, cy, radius - 40, angle, rotationOffset);
+    const p1 = polarToCartesian(cx, cy, layout.zodiacOuter, angle, rotationOffset);
+    const p2 = polarToCartesian(cx, cy, layout.zodiacInner, angle, rotationOffset);
     svg += `<line x1="${p1.x}" y1="${p1.y}" x2="${p2.x}" y2="${p2.y}" stroke="var(--astro-color-text)" stroke-opacity="0.2" />`;
     
     const midAngle = angle + 15;
-    const glyphPos = polarToCartesian(cx, cy, radius - 20, midAngle, rotationOffset);
+    const glyphPos = polarToCartesian(cx, cy, layout.zodiacSymbol, midAngle, rotationOffset);
     
-    // Direct Unicode Text
     svg += `<text x="${glyphPos.x}" y="${glyphPos.y}" 
                   font-size="22" 
                   text-anchor="middle" 

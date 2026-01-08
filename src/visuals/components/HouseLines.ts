@@ -1,24 +1,25 @@
 import { polarToCartesian } from '../geometry.js';
 import { HouseCusp } from '../../core/types.js';
+import { ChartLayout } from '../layout.js';
 
 export function drawHouseLines(
   cx: number,
   cy: number,
-  radius: number,
   houses: HouseCusp[],
-  rotationOffset: number
+  rotationOffset: number,
+  layout: ChartLayout
 ): string {
   let svg = '<g id="house-lines">';
 
-  // Draw the house ring circle
-  svg += `<circle cx="${cx}" cy="${cy}" r="${radius * 0.5}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`;
+  // House Ring circle
+  svg += `<circle cx="${cx}" cy="${cy}" r="${layout.houseRing}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`;
 
   houses.forEach((house, i) => {
     const nextHouse = houses[(i + 1) % houses.length];
     
-    // Draw Cusp Line
-    const innerPoint = polarToCartesian(cx, cy, radius * 0.4, house.longitude, rotationOffset);
-    const outerPoint = polarToCartesian(cx, cy, radius - 40, house.longitude, rotationOffset);
+    // Line from inner ring to zodiac inner edge
+    const innerPoint = polarToCartesian(cx, cy, layout.houseRing, house.longitude, rotationOffset);
+    const outerPoint = polarToCartesian(cx, cy, layout.zodiacInner, house.longitude, rotationOffset);
     
     const isAngle = [1, 4, 7, 10].includes(house.house);
     const strokeWidth = isAngle ? 1.5 : 0.8;
@@ -31,11 +32,10 @@ export function drawHouseLines(
                   stroke-opacity="${opacity}" 
                   stroke-dasharray="${isAngle ? '' : '3,3'}" />`;
 
-    // Draw House Number
     let midLong = (house.longitude + nextHouse.longitude) / 2;
     if (nextHouse.longitude < house.longitude) midLong += 180;
     
-    const textPos = polarToCartesian(cx, cy, radius * 0.45, midLong, rotationOffset);
+    const textPos = polarToCartesian(cx, cy, layout.houseText, midLong, rotationOffset);
     
     svg += `<text x="${textPos.x}" y="${textPos.y}" 
                   fill="var(--astro-color-text)" 

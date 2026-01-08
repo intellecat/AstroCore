@@ -1,6 +1,7 @@
 import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId, HouseCusp } from '../../core/types.js';
 import { resolveCollisions } from '../collision.js';
+import { ChartLayout } from '../layout.js';
 
 const UNICODE_MAP: Record<string, string> = {
   [BodyId.Sun]: '☉',
@@ -44,59 +45,62 @@ const COLOR_MAP: Record<string, string> = {
 export function drawPlanetGlyphs(
   cx: number,
   cy: number,
-  radius: number,
   planets: CelestialPosition[],
   houses: HouseCusp[],
-  rotationOffset: number
+  rotationOffset: number,
+  layout: ChartLayout
 ): string {
   let svg = '<g id="planet-glyphs">';
 
-  // Use user-preferred settings: 6 distance, 4 cusp buffer
   const adjusted = resolveCollisions(planets, houses, 6, 4);
 
-  adjusted.forEach(adj => {
-    const planet = planets.find(p => p.id === adj.id)!;
+  adjusted.forEach((adj) => {
+    const planet = planets.find((p) => p.id === adj.id)!;
     const char = UNICODE_MAP[planet.id] || '?';
     const color = COLOR_MAP[planet.id] || 'var(--astro-color-text)';
-    
-    const symPos = polarToCartesian(cx, cy, radius - 65, adj.adjustedLongitude, rotationOffset);
-    const markerStartPos = polarToCartesian(cx, cy, radius - 40, adj.originalLongitude, rotationOffset);
 
-    // FIXED LENGTH TICK LOGIC
+    const symPos = polarToCartesian(cx, cy, layout.planetSymbol, adj.adjustedLongitude, rotationOffset);
+    const markerStartPos = polarToCartesian(cx, cy, layout.planetTickStart, adj.originalLongitude, rotationOffset);
+
+    // Calculate fixed length tick
     const dx = symPos.x - markerStartPos.x;
     const dy = symPos.y - markerStartPos.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    
-    // Make the line exactly 10px long, pointing towards the symbol
-    const lineLength = 10;
-    const ratio = lineLength / dist;
-    
-    const markerEndPos = { 
-        x: markerStartPos.x + dx * ratio, 
-        y: markerStartPos.y + dy * ratio 
+    const ratio = layout.planetTickLength / dist;
+
+    const markerEndPos = {
+      x: markerStartPos.x + dx * ratio,
+      y: markerStartPos.y + dy * ratio,
     };
 
-    // Draw the 10px tick
+    // Draw the sloping marker line
     svg += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
                   x2="${markerEndPos.x}" y2="${markerEndPos.y}" 
-                  stroke="var(--astro-color-text)" stroke-width="0.8" stroke-opacity="0.4" />`;
+                  stroke="var(--astro-color-text)" 
+                  stroke-width="0.8" 
+                  stroke-opacity="0.4" />`;
 
-    // Symbol
+    // Planet Symbol
     svg += `<text x="${symPos.x}" y="${symPos.y}" 
                   fill="${color}" 
                   font-size="20" 
                   text-anchor="middle" 
                   dominant-baseline="central">${char}</text>`;
-    
+
+    // m/t indicators for Mean/True points
     if (planet.id.includes('Mean') || planet.id.includes('True')) {
-        const indicator = planet.id.includes('Mean') ? 'm' : 't';
-        svg += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" fill="${color}" font-size="8">${indicator}</text>`;
+      const indicator = planet.id.includes('Mean') ? 'm' : 't';
+      svg += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" fill="${color}" font-size="8">${indicator}</text>`;
     }
 
-    const textPos = polarToCartesian(cx, cy, radius - 85, adj.adjustedLongitude, rotationOffset);
+    // Degree Text
+    const textPos = polarToCartesian(cx, cy, layout.planetDegree, adj.adjustedLongitude, rotationOffset);
     svg += `<text x="${textPos.x}" y="${textPos.y}" 
-                  fill="var(--astro-color-text)" font-size="8" 
-                  text-anchor="middle" dominant-baseline="middle" opacity="0.6">${Math.floor(planet.degree)}°</text>`;
+                  fill="var(--astro-color-text)" 
+                  font-size="8" 
+                  text-anchor="middle" 
+                  dominant-baseline="middle" 
+                  opacity="0.6">${Math.floor(planet.degree)}°</text>`;
   });
 
   svg += '</g>';

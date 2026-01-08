@@ -21,73 +21,62 @@ export interface AdjustedPosition {
 }
 
 /**
- * Robust Global Collision Resolver.
- * Uses iterative repulsion while strictly enforcing circular order.
+ * Final Robust Global Resolver.
  */
 export function resolveCollisions(
   planets: CelestialPosition[],
   houses: HouseCusp[],
   minDistance: number = 8,
-  houseBuffer: number = 3.5
+  houseBuffer: number = 3.5,
+  avoidHouses: boolean = true // New flag
 ): AdjustedPosition[] {
   if (planets.length === 0) return [];
 
-  // 1. Initial Setup: Circular Order is fixed by sorted original longitudes
+  // 1. Define Order
   const data = [...planets]
     .sort((a, b) => a.longitude - b.longitude)
-    .map(p => ({
-        id: p.id,
-        original: p.longitude,
-        current: p.longitude
-    }));
+    .map(p => ({ id: p.id, original: p.longitude, current: p.longitude }));
 
   const n = data.length;
-  const iterations = 100; // High iterations for slow but stable convergence
+  const iterations = 100;
 
   for (let iter = 0; iter < iterations; iter++) {
     let moved = false;
 
-    // A. Resolve Planet-to-Planet collisions
+    // Repulsion
     for (let i = 0; i < n; i++) {
       const j = (i + 1) % n;
-      const a = data[i];
-      const b = data[j];
-
-      const dist = clockwiseDist(a.current, b.current);
-      if (dist < minDistance) {
+      const dist = clockwiseDist(data[i].current, data[j].current);
+      if (dist < minDistance - 0.001) {
         const overlap = minDistance - dist;
-        const shift = overlap / 2 + 0.05; // Strong push
-        
-        a.current = norm(a.current - shift);
-        b.current = norm(b.current + shift);
+        const shift = overlap / 2 + 0.05;
+        data[i].current = norm(data[i].current - shift);
+        data[j].current = norm(data[j].current + shift);
         moved = true;
       }
     }
 
-    // B. Resolve House Cusp collisions
-    for (let i = 0; i < n; i++) {
-        const p = data[i];
-        for (const house of houses) {
-            let diff = Math.abs(p.current - house.longitude);
-            if (diff > 180) diff = 360 - diff;
-
-            if (diff < houseBuffer) {
-                // If planet is clockwise of cusp, push CCW. Else push CW.
-                const isCW = clockwiseDist(house.longitude, p.current) < 180;
-                const shift = (houseBuffer - diff) + 0.1;
-                p.current = norm(isCW ? p.current + shift : p.current - shift);
-                moved = true;
+    // Cusp Buffer (Conditional)
+    if (avoidHouses) {
+        for (let i = 0; i < n; i++) {
+            for (const h of houses) {
+                let diff = Math.abs(data[i].current - h.longitude);
+                if (diff > 180) diff = 360 - diff;
+                if (diff < houseBuffer) {
+                    const isCW = clockwiseDist(h.longitude, data[i].current) < 180;
+                    const shift = houseBuffer - diff + 0.1;
+                    data[i].current = norm(isCW ? data[i].current + shift : data[i].current - shift);
+                    moved = true;
+                }
             }
         }
     }
 
-    // IMPORTANT: After every pass, ensure no planet "jumped" its neighbor
-    // This is the absolute guarantee for parallel marker lines.
+    // STRICT Order Integrity check
     for (let i = 0; i < n; i++) {
         const j = (i + 1) % n;
         const dist = clockwiseDist(data[i].current, data[j].current);
-        if (dist > 180) { // Indicates a jump
-            // Snap back to neighbor with min distance
+        if (dist > 350) { 
             data[j].current = norm(data[i].current + minDistance);
             moved = true;
         }

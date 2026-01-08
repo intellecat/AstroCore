@@ -1,6 +1,7 @@
 export * from './report.js';
 export * from './calculator.js';
 export * from './visuals/renderer.js';
+export * from './visuals/transit-renderer.js';
 export * from './visuals/theme.js';
 export * from './core/types.js';
 export * from './core/planets.js';

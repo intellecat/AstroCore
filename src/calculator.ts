@@ -26,15 +26,15 @@ export interface ChartInput {
   zodiacType?: ZodiacType;
   siderealMode?: SiderealMode;
   perspective?: Perspective;
+  aspectBodies?: BodyId[]; // New option
 }
 
 export function calculateChart(input: ChartInput): ChartData {
-  // 1. Configure Flags & State
+  // ... existing configuration logic ...
   let flags = CalculationFlag.Speed;
   
   if (input.zodiacType === ZodiacType.Sidereal) {
     flags |= CalculationFlag.Sidereal;
-    // USE NEW API: Set specific Ayanamsa
     configureSidereal(input.siderealMode ?? SiderealMode.FaganBradley);
   }
 
@@ -43,7 +43,6 @@ export function calculateChart(input: ChartInput): ChartData {
     flags |= CalculationFlag.Heliocentric;
   } else if (perspective === Perspective.Topocentric) {
     flags |= CalculationFlag.Topocentric;
-    // USE NEW API: Set observer location for topocentric parallax
     configureTopocentric(input.location);
   }
 
@@ -65,8 +64,17 @@ export function calculateChart(input: ChartInput): ChartData {
   // 4. Planets
   const bodies = calculatePlanets(jd, houses, angles, flags);
 
-  // 5. Aspects
-  const aspects = calculateAspects(bodies);
+  // 5. Aspects (FILTERED)
+  const defaultMainPlanets = [
+    BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
+    BodyId.Jupiter, BodyId.Saturn, BodyId.Uranus, BodyId.Neptune, BodyId.Pluto
+  ];
+  
+  const bodiesForAspects = input.aspectBodies 
+    ? bodies.filter(b => input.aspectBodies!.includes(b.id))
+    : bodies.filter(b => defaultMainPlanets.includes(b.id));
+
+  const aspects = calculateAspects(bodiesForAspects);
 
   // 6. Lunar Phase
   const sun = bodies.find(b => b.id === BodyId.Sun);

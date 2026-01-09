@@ -52,7 +52,7 @@ export function computeTransitLayout(mainRadius: number): TransitChartLayout {
     // House Ring
     houseRing: innerRadius * 0.55,
     houseText: innerRadius * 0.5,
-    angleLabelRadius: innerRadius * 0.42,
+    angleLabelRadius: innerRadius * 0.52,
 
     // Center Aspects
     aspectBoundary: innerRadius * 0.45

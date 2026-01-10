@@ -5,7 +5,7 @@ import { SVG_SYMBOLS } from './symbols.js';
 import { computeSynastryLayout } from './synastry-layout.js';
 import { drawZodiacWheel } from './components/ZodiacWheel.js';
 import { drawHouseLines } from './components/HouseLines.js';
-import { drawSynastryPlanetGlyphs } from './components/SynastryPlanetGlyphs.js';
+import { drawStackedPlanetRing, StackedRingLayout } from './components/StackedPlanetRing.js';
 import { drawAspectLines } from './components/AspectLines.js';
 import { drawDegreeRings } from './components/DegreeRings.js';
 import { RenderOptions } from './renderer.js';
@@ -46,26 +46,38 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
 
   // 3. Person B (Outer Ring)
   svgParts.push(drawHouseLines(cx, cy, chartB.houses, rotationOffset, layout, {
-      startRadius: layout.innerPersonRing, 
-      endRadius: layout.zodiacInner,                
+      startRadius: layout.outerRing.innerRadius, 
+      endRadius: layout.outerRing.baseRadius,                
       showLabels: true,
-      labelRadius: layout.innerPersonRing + 8 
+      labelRadius: layout.outerRing.innerRadius + 8 
   }));
 
-  svgParts.push(drawSynastryPlanetGlyphs(cx, cy, chartB.bodies, true, rotationOffset, layout));
+  const outerRingLayout: StackedRingLayout = {
+      symbolStartRadius: layout.outerRing.symbolRadius,
+      orbitStep: layout.outerRing.orbitStep,
+      tickStartRadius: layout.outerRing.tickStart,
+      tickLength: layout.outerRing.tickLength
+  };
+  svgParts.push(drawStackedPlanetRing(cx, cy, chartB.bodies, rotationOffset, outerRingLayout));
 
   // 4. Separator
 //   svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${layout.innerPersonRing}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.3" />`);
 
   // 5. Person A (Inner Ring)
   svgParts.push(drawHouseLines(cx, cy, chartA.houses, rotationOffset, layout, {
-      startRadius: layout.houseRing,
-      endRadius: layout.innerPersonRing,
+      startRadius: layout.innerRing.innerRadius,
+      endRadius: layout.innerRing.baseRadius,
       showLabels: true,
-      labelRadius: layout.houseRing + 8
+      labelRadius: layout.innerRing.innerRadius + 8
   }));
 
-  svgParts.push(drawSynastryPlanetGlyphs(cx, cy, chartA.bodies, false, rotationOffset, layout));
+  const innerRingLayout: StackedRingLayout = {
+    symbolStartRadius: layout.innerRing.symbolRadius,
+    orbitStep: layout.innerRing.orbitStep,
+    tickStartRadius: layout.innerRing.tickStart,
+    tickLength: layout.innerRing.tickLength
+  };
+  svgParts.push(drawStackedPlanetRing(cx, cy, chartA.bodies, rotationOffset, innerRingLayout));
 
   // 6. Aspects
   svgParts.push(`<circle cx="${cx}" cy="${cy}" r="${layout.aspectBoundary}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`);

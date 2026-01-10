@@ -6,7 +6,7 @@ import { computeTransitLayout } from './transit-layout.js';
 import { drawZodiacWheel } from './components/ZodiacWheel.js';
 import { drawHouseLines } from './components/HouseLines.js';
 import { drawPlanetGlyphs } from './components/PlanetGlyphs.js';
-import { drawTransitPlanetGlyphs } from './components/TransitPlanetGlyphs.js';
+import { drawOuterPlanetRing, OuterRingLayout } from './components/OuterPlanetRing.js';
 import { drawAspectLines } from './components/AspectLines.js';
 import { drawDegreeRings } from './components/DegreeRings.js';
 import { RenderOptions } from './renderer.js';
@@ -61,8 +61,15 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
   svgParts.push(drawPlanetGlyphs(cx, cy, natalChart.bodies, natalChart.houses, rotationOffset, layout, options.markerRenderer));
 
   // 4. Outer Transit Planets (Show ALL, or just Main? Usually show all, but aspect only main)
-  // Let's show all transit planets as glyphs, but aspect lines only for main.
-  svgParts.push(drawTransitPlanetGlyphs(cx, cy, transitChart.bodies, natalChart.houses, rotationOffset, layout));
+  // Construct Layout object for OuterRing
+  const outerRingLayout: OuterRingLayout = {
+      symbolRadius: layout.transitSymbol,
+      tickStartRadius: layout.transitTickStart,
+      tickLength: layout.transitTickLength,
+      degreeRadius: layout.transitDegree
+  };
+  
+  svgParts.push(drawOuterPlanetRing(cx, cy, transitChart.bodies, rotationOffset, outerRingLayout));
 
   svgParts.push('</svg>');
   return svgParts.join('\n');

@@ -1,19 +1,17 @@
 import { ChartLayout } from './layout.js';
 
-export interface SynastryChartLayout extends ChartLayout {
-  // Subject B (Outer Person)
-  outerPersonRing: number;
-  outerPersonSymbol: number;
-  outerPersonTickStart: number;
-  outerPersonTickLength: number;
-  outerPersonOrbitStep: number; 
+export interface RingLayout {
+  baseRadius: number; // The outer boundary for this ring
+  innerRadius: number; // The inner boundary for this ring
+  symbolRadius: number; // Where symbols are generally placed (within the boundaries)
+  tickStart: number;
+  tickLength: number;
+  orbitStep: number; // For stacked/collision-resolved rings
+}
 
-  // Subject A (Inner Person)
-  innerPersonRing: number;
-  innerPersonSymbol: number;
-  innerPersonTickStart: number;
-  innerPersonTickLength: number;
-  innerPersonOrbitStep: number; 
+export interface SynastryChartLayout extends ChartLayout {
+  outerRing: RingLayout;
+  innerRing: RingLayout;
 }
 
 /**
@@ -25,14 +23,13 @@ export function computeSynastryLayout(mainRadius: number): SynastryChartLayout {
 
   // EQUAL BAND THICKNESS
   const bandThickness = 65; 
-  const spacer = 0;
 
   // Person B Band (Outer)
   const pB_Start = zInner;
   const pB_End = pB_Start - bandThickness;
   
   // Person A Band (Inner)
-  const pA_Start = pB_End - spacer;
+  const pA_Start = pB_End;
   const pA_End = pA_Start - bandThickness;
 
   const houseRing = pA_End;
@@ -50,20 +47,26 @@ export function computeSynastryLayout(mainRadius: number): SynastryChartLayout {
     degreeTickLarge: 8,
 
     // Person B (Outer)
-    outerPersonRing: pB_Start,
-    outerPersonSymbol: pB_Start - 25,
-    outerPersonTickStart: zInner,
-    outerPersonTickLength: 10,
-    outerPersonOrbitStep: 18,
+    outerRing: {
+        baseRadius: pB_Start,
+        innerRadius: pB_End,
+        symbolRadius: pB_Start - 25,
+        tickStart: zInner,
+        tickLength: 10,
+        orbitStep: 18
+    },
 
     // Person A (Inner)
-    innerPersonRing: pA_Start,
-    innerPersonSymbol: pA_Start - 25,
-    innerPersonTickStart: pA_Start,
-    innerPersonTickLength: 10,
-    innerPersonOrbitStep: 18,
+    innerRing: {
+        baseRadius: pA_Start,
+        innerRadius: pA_End,
+        symbolRadius: pA_Start - 25,
+        tickStart: pA_Start,
+        tickLength: 10,
+        orbitStep: 18
+    },
 
-    // Default planet props (fallback)
+    // Default planet props (fallback, unused in synastry specific rendering usually)
     planetSymbol: 0,
     planetDegree: 0,
     planetTickStart: 0,

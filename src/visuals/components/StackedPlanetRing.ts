@@ -1,7 +1,6 @@
 import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId } from '../../core/types.js';
 import { resolveSynastryCollisions } from '../collision_synastry.js';
-import { SynastryChartLayout } from '../synastry-layout.js';
 
 const UNICODE_MAP: Record<string, string> = {
   [BodyId.Sun]: '☉', [BodyId.Moon]: '☽', [BodyId.Mercury]: '☿', [BodyId.Venus]: '♀', [BodyId.Mars]: '♂',
@@ -19,22 +18,23 @@ const COLOR_MAP: Record<string, string> = {
   [BodyId.LilithMean]: 'var(--astro-color-mean-lilith)', [BodyId.LilithTrue]: 'var(--astro-color-mean-lilith)',
 };
 
-export function drawSynastryPlanetGlyphs(
+export interface StackedRingLayout {
+    symbolStartRadius: number; // The radius for the first orbit (radialOffset = 0)
+    orbitStep: number; // Distance between "stacks" or orbits
+    tickStartRadius: number;
+    tickLength: number;
+}
+
+export function drawStackedPlanetRing(
   cx: number,
   cy: number,
   planets: CelestialPosition[],
-  isOuter: boolean, 
   rotationOffset: number,
-  layout: SynastryChartLayout
+  layout: StackedRingLayout
 ): string {
-  let svg = '<g class="synastry-planets">';
+  let svg = '<g class="stacked-planet-ring">';
 
   const adjusted = resolveSynastryCollisions(planets, 6);
-
-  const baseRadius = isOuter ? layout.outerPersonSymbol : layout.innerPersonSymbol;
-  const orbitStep = isOuter ? layout.outerPersonOrbitStep : layout.innerPersonOrbitStep;
-  const tickStartRadius = isOuter ? layout.outerPersonTickStart : layout.innerPersonTickStart;
-  const tickLen = isOuter ? layout.outerPersonTickLength : layout.innerPersonTickLength;
 
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
@@ -42,12 +42,13 @@ export function drawSynastryPlanetGlyphs(
     const color = COLOR_MAP[planet.id] || 'var(--astro-color-text)';
     
     // 1. Symbol Position (Collision Aware)
-    const r = baseRadius - (adj.radialOffset * orbitStep);
+    // We subtract because in our layout model, "stacking" usually goes inwards from the symbolStartRadius
+    const r = layout.symbolStartRadius - (adj.radialOffset * layout.orbitStep);
     const symPos = polarToCartesian(cx, cy, r, adj.adjustedLongitude, rotationOffset);
     
-    // 2. Simple Marker Logic (Non-sloping, Fixed Length)
-    const markerStartPos = polarToCartesian(cx, cy, tickStartRadius, adj.originalLongitude, rotationOffset);
-    const markerEndPos = polarToCartesian(cx, cy, tickStartRadius - tickLen, adj.originalLongitude, rotationOffset);
+    // 2. Simple Marker Logic
+    const markerStartPos = polarToCartesian(cx, cy, layout.tickStartRadius, adj.originalLongitude, rotationOffset);
+    const markerEndPos = polarToCartesian(cx, cy, layout.tickStartRadius - layout.tickLength, adj.originalLongitude, rotationOffset);
 
     // Draw Tick (Colored)
     svg += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 

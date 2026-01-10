@@ -1,7 +1,6 @@
 import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId, HouseCusp } from '../../core/types.js';
 import { resolveCollisions } from '../collision.js';
-import { ChartLayout } from '../layout.js';
 import { MarkerRenderer, drawLineMarker } from './Markers.js';
 
 const UNICODE_MAP: Record<string, string> = {
@@ -43,13 +42,20 @@ const COLOR_MAP: Record<string, string> = {
   [BodyId.LilithTrue]: 'var(--astro-color-mean-lilith)',
 };
 
+export interface PlanetGlyphsConfig {
+    planetSymbol: number;
+    planetDegree: number;
+    planetTickStart: number;
+    planetTickLength: number;
+}
+
 export function drawPlanetGlyphs(
   cx: number,
   cy: number,
   planets: CelestialPosition[],
   houses: HouseCusp[],
   rotationOffset: number,
-  layout: ChartLayout,
+  config: PlanetGlyphsConfig,
   markerRenderer: MarkerRenderer = drawLineMarker
 ): string {
   let svg = '<g id="planet-glyphs">';
@@ -61,11 +67,11 @@ export function drawPlanetGlyphs(
     const char = UNICODE_MAP[planet.id] || '?';
     const color = COLOR_MAP[planet.id] || 'var(--astro-color-text)';
 
-    const symPos = polarToCartesian(cx, cy, layout.planetSymbol, adj.adjustedLongitude, rotationOffset);
-    const markerStartPos = polarToCartesian(cx, cy, layout.planetTickStart, adj.originalLongitude, rotationOffset);
+    const symPos = polarToCartesian(cx, cy, config.planetSymbol, adj.adjustedLongitude, rotationOffset);
+    const markerStartPos = polarToCartesian(cx, cy, config.planetTickStart, adj.originalLongitude, rotationOffset);
 
     // Use the abstracted marker renderer
-    svg += markerRenderer(markerStartPos, symPos, layout);
+    svg += markerRenderer(markerStartPos, symPos, config.planetTickLength);
 
     // Planet Symbol
     svg += `<text x="${symPos.x}" y="${symPos.y}" 
@@ -81,7 +87,7 @@ export function drawPlanetGlyphs(
     }
 
     // Degree Text
-    const textPos = polarToCartesian(cx, cy, layout.planetDegree, adj.adjustedLongitude, rotationOffset);
+    const textPos = polarToCartesian(cx, cy, config.planetDegree, adj.adjustedLongitude, rotationOffset);
     svg += `<text x="${textPos.x}" y="${textPos.y}" 
                   fill="var(--astro-color-text)" 
                   font-size="8" 

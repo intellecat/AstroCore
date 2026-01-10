@@ -1,31 +1,43 @@
 import { ChartData } from '../core/types.js';
 import { createChart, ChartDefinition } from './core/engine.js';
-import { computeSynastryLayout } from './synastry-layout.js';
 import './core/adapters.js';
 import { RenderOptions } from './renderer.js';
 
 export function renderSynastryChart(chartA: ChartData, chartB: ChartData, options: RenderOptions = {}): string {
-  const radius = Math.min(options.width ?? 700, options.height ?? 700) * 0.45;
-  const layout = computeSynastryLayout(radius);
+  const mainRadius = Math.min(options.width ?? 700, options.height ?? 700) * 0.45;
+  
+  const zodiacInnerRadius = mainRadius - 40; 
+  const bandThickness = 65; 
+
+  // Person B Band (Outer)
+  const personBOuterRadius = zodiacInnerRadius;
+  const personBInnerRadius = personBOuterRadius - bandThickness;
+  
+  // Person A Band (Inner)
+  const personAOuterRadius = personBInnerRadius;
+  const personAInnerRadius = personAOuterRadius - bandThickness;
+
+  const innerHouseRingRadius = personAInnerRadius;
+  const aspectBoundary = innerHouseRingRadius;
 
   const definition: ChartDefinition = {
-    width: 700,
-    height: 700,
+    width: options.width,
+    height: options.height,
     theme: options.theme,
     components: [
-      { type: 'circle', props: { radius: layout.radius, fill: 'var(--astro-color-paper)' } },
+      { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
       
       // Zodiac & Scales
       { type: 'zodiacWheel', props: { 
-          outerRadius: layout.zodiacOuter, 
-          innerRadius: layout.zodiacInner, 
-          symbolRadius: layout.zodiacSymbol 
+          outerRadius: mainRadius, 
+          innerRadius: zodiacInnerRadius, 
+          symbolRadius: mainRadius - 20 
       } },
       { type: 'degreeRings', props: { 
-          degreeRadius: layout.degreeRing,
-          tickSmall: layout.degreeTickSmall,
-          tickMedium: layout.degreeTickMedium,
-          tickLarge: layout.degreeTickLarge
+          degreeRadius: zodiacInnerRadius,
+          tickSmall: 3,
+          tickMedium: 5,
+          tickLarge: 8
       } },
 
       // 3. Person B (Outer Ring)
@@ -33,20 +45,20 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
         type: 'houseLines', 
         dataSource: 'secondary',
         props: { 
-            startRadius: layout.outerRing.innerRadius, 
-            endRadius: layout.outerRing.baseRadius,
+            startRadius: personBInnerRadius, 
+            endRadius: personBOuterRadius,
             showLabels: true,
-            labelRadius: layout.outerRing.innerRadius + 8
+            labelRadius: personBInnerRadius + 8
         }
       },
       {
         type: 'stackedPlanetRing',
         dataSource: 'secondary',
         props: {
-            symbolRadius: layout.outerRing.symbolRadius,
-            orbitStep: layout.outerRing.orbitStep,
-            tickStartRadius: layout.outerRing.tickStart,
-            tickLength: layout.outerRing.tickLength
+            symbolRadius: personBOuterRadius - 25,
+            orbitStep: 18,
+            tickStartRadius: zodiacInnerRadius,
+            tickLength: 10
         }
       },
 
@@ -55,25 +67,25 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
         type: 'houseLines', 
         dataSource: 'primary',
         props: { 
-            startRadius: layout.innerRing.innerRadius, 
-            endRadius: layout.innerRing.baseRadius,
+            startRadius: personAInnerRadius, 
+            endRadius: personAOuterRadius,
             showLabels: true,
-            labelRadius: layout.innerRing.innerRadius + 8
+            labelRadius: personAInnerRadius + 8
         }
       },
       {
         type: 'stackedPlanetRing',
         dataSource: 'primary',
         props: {
-            symbolRadius: layout.innerRing.symbolRadius,
-            orbitStep: layout.innerRing.orbitStep,
-            tickStartRadius: layout.innerRing.tickStart,
-            tickLength: layout.innerRing.tickLength
+            symbolRadius: personAOuterRadius - 25,
+            orbitStep: 18,
+            tickStartRadius: personAOuterRadius,
+            tickLength: 10
         }
       },
 
       // 6. Aspects
-      { type: 'circle', props: { radius: layout.aspectBoundary, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
+      { type: 'circle', props: { radius: aspectBoundary, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
     ]
   };
 
@@ -81,7 +93,7 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
     definition.components.push({ 
         type: 'aspectLines', 
         dataSource: 'combined',
-        props: { radius: layout.aspectBoundary } 
+        props: { radius: aspectBoundary } 
     });
   }
 

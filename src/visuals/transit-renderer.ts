@@ -1,44 +1,49 @@
 import { ChartData } from '../core/types.js';
 import { createChart, ChartDefinition } from './core/engine.js';
-import { computeTransitLayout } from './transit-layout.js';
 import './core/adapters.js';
 import { RenderOptions } from './renderer.js';
 
 export function renderTransitChart(natalChart: ChartData, transitChart: ChartData, options: RenderOptions = {}): string {
-  const radius = Math.min(options.width ?? 600, options.height ?? 600) * 0.45;
-  const layout = computeTransitLayout(radius);
+  const mainRadius = Math.min(options.width ?? 600, options.height ?? 600) * 0.45;
+  
+  // Layout Calculation
+  const transitBand = mainRadius * 0.15;
+  const innerRadius = mainRadius - transitBand;
 
   const definition: ChartDefinition = {
     width: options.width,
     height: options.height,
     theme: options.theme,
     components: [
-      { type: 'circle', props: { radius: layout.radius, fill: 'var(--astro-color-paper)' } },
+      { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
       
       // Transit Ring Boundary
-      { type: 'circle', props: { radius: layout.transitRingInner, stroke: 'var(--astro-color-text)', strokeOpacity: 0.2 } },
+      { type: 'circle', props: { radius: innerRadius, stroke: 'var(--astro-color-text)', strokeOpacity: 0.2 } },
 
       // Inner Natal Chart
       { type: 'zodiacWheel', props: { 
-          outerRadius: layout.zodiacOuter, 
-          innerRadius: layout.zodiacInner, 
-          symbolRadius: layout.zodiacSymbol 
+          outerRadius: innerRadius, 
+          innerRadius: innerRadius - 35, 
+          symbolRadius: innerRadius - 17 
       } },
       { type: 'degreeRings', props: { 
-          degreeRadius: layout.degreeRing,
-          tickSmall: layout.degreeTickSmall,
-          tickMedium: layout.degreeTickMedium,
-          tickLarge: layout.degreeTickLarge
+          degreeRadius: innerRadius - 35,
+          tickSmall: 3,
+          tickMedium: 5,
+          tickLarge: 8
       } },
-      { type: 'houseLines', props: { radius: layout.houseRing } },
+      { type: 'houseLines', props: { 
+          radius: innerRadius * 0.55,
+          angleLabelRadius: innerRadius * 0.52
+      } },
       
-      { type: 'circle', props: { radius: layout.aspectBoundary, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
+      { type: 'circle', props: { radius: innerRadius * 0.45, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
       
       { type: 'planetRing', props: { 
-          symbolRadius: layout.planetSymbol,
-          degreeRadius: layout.planetDegree,
-          tickStartRadius: layout.planetTickStart,
-          tickLength: layout.planetTickLength,
+          symbolRadius: innerRadius - 60,
+          degreeRadius: innerRadius - 75,
+          tickStartRadius: innerRadius - 35,
+          tickLength: 8,
           markerRenderer: options.markerRenderer
       } },
 
@@ -47,10 +52,10 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
         type: 'outerPlanetRing', 
         dataSource: 'secondary',
         props: {
-            symbolRadius: layout.transitSymbol,
-            tickStartRadius: layout.transitTickStart,
-            tickLength: layout.transitTickLength,
-            degreeRadius: layout.transitDegree
+            symbolRadius: mainRadius - 20,
+            tickStartRadius: innerRadius,
+            tickLength: 10,
+            degreeRadius: mainRadius - 8
         }
       }
     ]
@@ -60,7 +65,7 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
     definition.components.push({ 
         type: 'aspectLines', 
         dataSource: 'combined',
-        props: { radius: layout.aspectBoundary } 
+        props: { radius: innerRadius * 0.45 } 
     });
   }
 

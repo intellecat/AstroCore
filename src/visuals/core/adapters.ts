@@ -1,52 +1,13 @@
 import { registerComponent, RenderContext, ComponentConfig } from './engine.js';
-import { drawZodiacWheel } from '../components/ZodiacWheel.js';
-import { drawDegreeRings } from '../components/DegreeRings.js';
-import { drawHouseLines } from '../components/HouseLines.js';
+import { drawZodiacWheel, ZodiacWheelConfig } from '../components/ZodiacWheel.js';
+import { drawDegreeRings, DegreeRingsConfig } from '../components/DegreeRings.js';
+import { drawHouseLines, HouseLinesConfig } from '../components/HouseLines.js';
 import { drawOuterPlanetRing, OuterRingLayout } from '../components/OuterPlanetRing.js';
 import { drawStackedPlanetRing, StackedRingLayout } from '../components/StackedPlanetRing.js';
-import { drawAspectLines } from '../components/AspectLines.js';
+import { drawAspectLines, AspectLinesConfig } from '../components/AspectLines.js';
+import { drawPlanetGlyphs, PlanetGlyphsConfig } from '../components/PlanetGlyphs.js';
 import { calculateDualAspects } from '../../core/aspects.js';
 import { ChartData, BodyId } from '../../core/types.js';
-
-// --- Helpers ---
-
-// Helper to construct a Layout-like object that the old components expect
-function getLayoutProps(ctx: RenderContext, props: any) {
-  // Merge context-derived defaults with specific props
-  return {
-    ...props,
-    // Some components might need specific keys that were in the old generic ChartLayout
-    // We can map props.radius to specific keys if needed, or update components to be more generic
-    // For now, our new components (OuterPlanetRing, etc) take specific config objects, which is great.
-    // The older ones (ZodiacWheel) take a Layout object. We might need to mock it.
-  };
-}
-
-// Mock Layout for legacy components that expect a full ChartLayout
-// We construct it dynamically from the props provided in the config
-function createLegacyLayout(ctx: RenderContext, props: any) {
-    return {
-        radius: ctx.radius,
-        // Zodiac
-        zodiacOuter: props.outerRadius ?? ctx.radius,
-        zodiacInner: props.innerRadius ?? (ctx.radius - 40),
-        zodiacSymbol: props.symbolRadius ?? (ctx.radius - 20),
-        // Degree
-        degreeRing: props.degreeRadius ?? (ctx.radius - 40),
-        degreeTickSmall: props.tickSmall ?? 3,
-        degreeTickMedium: props.tickMedium ?? 5,
-        degreeTickLarge: props.tickLarge ?? 8,
-        // House
-        houseRing: props.radius ?? (ctx.radius * 0.5),
-        houseText: props.textRadius ?? (ctx.radius * 0.45),
-        angleLabelRadius: props.labelRadius ?? (ctx.radius * 0.45),
-        // Aspect
-        aspectBoundary: props.radius ?? (ctx.radius * 0.4),
-        // Dummy values for others
-        planetSymbol: 0, planetDegree: 0, planetTickStart: 0, planetTickLength: 0,
-    } as any;
-}
-
 
 // --- Adapters ---
 
@@ -61,30 +22,44 @@ registerComponent('circle', (ctx, config) => {
 
 // 2. Zodiac Wheel
 registerComponent('zodiacWheel', (ctx, config) => {
-  const layout = createLegacyLayout(ctx, config.props);
-  return drawZodiacWheel(ctx.cx, ctx.cy, ctx.rotationOffset, layout);
+  const c: ZodiacWheelConfig = {
+      outerRadius: config.props?.outerRadius ?? ctx.radius,
+      innerRadius: config.props?.innerRadius ?? (ctx.radius - 40),
+      symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 20)
+  };
+  return drawZodiacWheel(ctx.cx, ctx.cy, ctx.rotationOffset, c);
 });
 
 // 3. Degree Rings
 registerComponent('degreeRings', (ctx, config) => {
-    const layout = createLegacyLayout(ctx, config.props);
-    return drawDegreeRings(ctx.cx, ctx.cy, ctx.rotationOffset, layout);
+    const c: DegreeRingsConfig = {
+        degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 40),
+        tickSmall: config.props?.tickSmall ?? 3,
+        tickMedium: config.props?.tickMedium ?? 5,
+        tickLarge: config.props?.tickLarge ?? 8
+    };
+    return drawDegreeRings(ctx.cx, ctx.cy, ctx.rotationOffset, c);
 });
 
 // 4. House Lines
 registerComponent('houseLines', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
-    const layout = createLegacyLayout(ctx, config.props);
     
-    // Allow overriding start/end radius specifically for simple HouseLines usage
-    const options = {
-        startRadius: config.props?.startRadius,
-        endRadius: config.props?.endRadius,
+    // Default logic: lines go from 'radius' to 'endRadius'.
+    // If only 'radius' is given (typical for Natal), endRadius defaults to something logical (Zodiac Inner).
+    // But since we are declarative now, we prefer explicit props or defaults relative to ctx.
+    
+    const radius = config.props?.radius ?? (ctx.radius * 0.5); // Inner ring
+    
+    const c: HouseLinesConfig = {
+        radius: config.props?.startRadius ?? radius,
+        endRadius: config.props?.endRadius ?? (ctx.radius - 40), // Default to Zodiac Inner
         showLabels: config.props?.showLabels,
-        labelRadius: config.props?.labelRadius
+        labelRadius: config.props?.labelRadius,
+        angleLabelRadius: config.props?.angleLabelRadius ?? (ctx.radius * 0.45)
     };
 
-    return drawHouseLines(ctx.cx, ctx.cy, dataSource.houses, ctx.rotationOffset, layout, options);
+    return drawHouseLines(ctx.cx, ctx.cy, dataSource.houses, ctx.rotationOffset, c);
 });
 
 // 5. Outer Planet Ring (Transit Style)
@@ -100,10 +75,6 @@ registerComponent('outerPlanetRing', (ctx, config) => {
 
     return drawOuterPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, layout);
 });
-
-import { drawPlanetGlyphs } from '../components/PlanetGlyphs.js';
-
-// ... (existing code)
 
 // 6. Stacked Planet Ring (Synastry/Natal Style)
 registerComponent('stackedPlanetRing', (ctx, config) => {
@@ -122,15 +93,12 @@ registerComponent('stackedPlanetRing', (ctx, config) => {
 // 6b. Standard Planet Ring (Natal Style)
 registerComponent('planetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
-    const layout = createLegacyLayout(ctx, config.props);
     
-    // Merge specific planet props if they exist in config.props
-    const planetLayout = {
-        ...layout,
-        planetSymbol: config.props?.symbolRadius ?? layout.planetSymbol,
-        planetDegree: config.props?.degreeRadius ?? layout.planetDegree,
-        planetTickStart: config.props?.tickStartRadius ?? layout.planetTickStart,
-        planetTickLength: config.props?.tickLength ?? layout.planetTickLength,
+    const c: PlanetGlyphsConfig = {
+        planetSymbol: config.props?.symbolRadius ?? (ctx.radius - 75),
+        planetDegree: config.props?.degreeRadius ?? (ctx.radius - 95),
+        planetTickStart: config.props?.tickStartRadius ?? (ctx.radius - 45),
+        planetTickLength: config.props?.tickLength ?? 10
     };
 
     return drawPlanetGlyphs(
@@ -138,7 +106,7 @@ registerComponent('planetRing', (ctx, config) => {
         dataSource.bodies, 
         ctx.primary.houses, // Always use primary houses for collision context
         ctx.rotationOffset, 
-        planetLayout, 
+        c, 
         config.props?.markerRenderer
     );
 });
@@ -156,12 +124,14 @@ registerComponent('aspectLines', (ctx, config) => {
         // Synastry / Transit Aspects
         const bodiesA = ctx.primary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
         const bodiesB = ctx.secondary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
-        aspects = calculateDualAspects(bodiesA, bodiesB); // Or bodiesB, bodiesA depending on direction
+        aspects = calculateDualAspects(bodiesA, bodiesB); 
     } else {
-        // Natal Aspects (already calculated in data)
+        // Natal Aspects
         aspects = ctx.primary.aspects;
     }
 
-    const layout = createLegacyLayout(ctx, config.props);
-    return drawAspectLines(ctx.cx, ctx.cy, aspects, ctx.rotationOffset, layout);
+    const c: AspectLinesConfig = {
+        radius: config.props?.radius ?? (ctx.radius * 0.4)
+    };
+    return drawAspectLines(ctx.cx, ctx.cy, aspects, ctx.rotationOffset, c);
 });

@@ -1,20 +1,23 @@
 import { polarToCartesian } from '../geometry.js';
 import { Aspect, AspectType } from '../../core/types.js';
-import { ChartLayout } from '../layout.js';
+
+export interface AspectLinesConfig {
+  radius: number; // The boundary radius where lines attach
+}
 
 export function drawAspectLines(
   cx: number,
   cy: number,
   aspects: Aspect[],
   rotationOffset: number,
-  layout: ChartLayout
+  config: AspectLinesConfig
 ): string {
   let svg = '<g id="aspect-lines">';
 
   aspects.forEach(asp => {
     // Correctly use body1 and body2 longitudes
-    const pt1 = polarToCartesian(cx, cy, layout.aspectBoundary, asp.body1.longitude, rotationOffset);
-    const pt2 = polarToCartesian(cx, cy, layout.aspectBoundary, asp.body2.longitude, rotationOffset);
+    const pt1 = polarToCartesian(cx, cy, config.radius, asp.body1.longitude, rotationOffset);
+    const pt2 = polarToCartesian(cx, cy, config.radius, asp.body2.longitude, rotationOffset);
 
     let colorVar = '--astro-color-aspect-minor';
     switch (asp.type) {

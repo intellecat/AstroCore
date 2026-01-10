@@ -1,19 +1,18 @@
 import { Point } from '../geometry.js';
-import { ChartLayout } from '../layout.js';
 
-export type MarkerRenderer = (start: Point, target: Point, layout: ChartLayout) => string;
+export type MarkerRenderer = (start: Point, target: Point, length: number) => string;
 
 /**
  * Default implementation: A straight line (sloping if needed) of fixed length.
  */
-export function drawLineMarker(start: Point, target: Point, layout: ChartLayout): string {
+export function drawLineMarker(start: Point, target: Point, length: number): string {
   const dx = target.x - start.x;
   const dy = target.y - start.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
   
   if (dist === 0) return '';
 
-  const ratio = layout.planetTickLength / dist;
+  const ratio = length / dist;
 
   const endX = start.x + dx * ratio;
   const endY = start.y + dy * ratio;

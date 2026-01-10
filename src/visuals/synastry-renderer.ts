@@ -1,10 +1,11 @@
 import { ChartData } from '../core/types.js';
 import { createChart, ChartDefinition } from './core/engine.js';
 import './core/adapters.js';
-import { RenderOptions } from './renderer.js';
 
-export function renderSynastryChart(chartA: ChartData, chartB: ChartData, options: RenderOptions = {}): string {
-  const mainRadius = Math.min(options.width ?? 700, options.height ?? 700) * 0.45;
+export function renderSynastryChart(chartA: ChartData, chartB: ChartData): string {
+  const width = 700;
+  const height = 700;
+  const mainRadius = Math.min(width, height) * 0.45;
   
   const zodiacInnerRadius = mainRadius - 40; 
   const bandThickness = 65; 
@@ -21,9 +22,8 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
   const aspectBoundary = innerHouseRingRadius;
 
   const definition: ChartDefinition = {
-    width: options.width,
-    height: options.height,
-    theme: options.theme,
+    width,
+    height,
     components: [
       { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
       
@@ -86,16 +86,14 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData, option
 
       // 6. Aspects
       { type: 'circle', props: { radius: aspectBoundary, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
-    ]
-  };
-
-  if (options.showAspects !== false) {
-    definition.components.push({ 
+      
+      { 
         type: 'aspectLines', 
         dataSource: 'combined',
         props: { radius: aspectBoundary } 
-    });
-  }
+      }
+    ]
+  };
 
   return createChart(definition, chartA, chartB);
 }

@@ -1,19 +1,19 @@
 import { ChartData } from '../core/types.js';
 import { createChart, ChartDefinition } from './core/engine.js';
 import './core/adapters.js';
-import { RenderOptions } from './renderer.js';
 
-export function renderTransitChart(natalChart: ChartData, transitChart: ChartData, options: RenderOptions = {}): string {
-  const mainRadius = Math.min(options.width ?? 600, options.height ?? 600) * 0.45;
+export function renderTransitChart(natalChart: ChartData, transitChart: ChartData): string {
+  const width = 600;
+  const height = 600;
+  const mainRadius = Math.min(width, height) * 0.45;
   
   // Layout Calculation
   const transitBand = mainRadius * 0.15;
   const innerRadius = mainRadius - transitBand;
 
   const definition: ChartDefinition = {
-    width: options.width,
-    height: options.height,
-    theme: options.theme,
+    width,
+    height,
     components: [
       { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
       
@@ -43,8 +43,7 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
           symbolRadius: innerRadius - 60,
           degreeRadius: innerRadius - 75,
           tickStartRadius: innerRadius - 35,
-          tickLength: 8,
-          markerRenderer: options.markerRenderer
+          tickLength: 8
       } },
 
       // Outer Transit Ring
@@ -57,17 +56,15 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
             tickLength: 10,
             degreeRadius: mainRadius - 8
         }
-      }
-    ]
-  };
-
-  if (options.showAspects !== false) {
-    definition.components.push({ 
+      },
+      
+      { 
         type: 'aspectLines', 
         dataSource: 'combined',
         props: { radius: innerRadius * 0.45 } 
-    });
-  }
+      }
+    ]
+  };
 
   return createChart(definition, natalChart, transitChart);
 }

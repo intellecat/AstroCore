@@ -1,24 +1,15 @@
 import { ChartData } from '../core/types.js';
 import { createChart, ChartDefinition } from './core/engine.js';
 import './core/adapters.js';
-import { Theme } from './theme.js';
-import { MarkerRenderer } from './components/Markers.js';
 
-export interface RenderOptions {
-  width?: number;
-  height?: number;
-  theme?: Theme;
-  showAspects?: boolean;
-  markerRenderer?: MarkerRenderer;
-}
-
-export function renderChart(chart: ChartData, options: RenderOptions = {}): string {
-  const mainRadius = Math.min(options.width ?? 600, options.height ?? 600) * 0.45;
+export function renderChart(chart: ChartData): string {
+  const width = 600;
+  const height = 600;
+  const mainRadius = Math.min(width, height) * 0.45;
 
   const definition: ChartDefinition = {
-    width: options.width,
-    height: options.height,
-    theme: options.theme,
+    width,
+    height,
     components: [
       { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
       { type: 'zodiacWheel', props: { 
@@ -41,15 +32,11 @@ export function renderChart(chart: ChartData, options: RenderOptions = {}): stri
           symbolRadius: mainRadius - 75,
           degreeRadius: mainRadius - 95,
           tickStartRadius: mainRadius - 45,
-          tickLength: 10,
-          markerRenderer: options.markerRenderer
-      } }
+          tickLength: 10
+      } },
+      { type: 'aspectLines', props: { radius: mainRadius * 0.4 } }
     ]
   };
-
-  if (options.showAspects !== false) {
-    definition.components.push({ type: 'aspectLines', props: { radius: mainRadius * 0.4 } });
-  }
 
   return createChart(definition, chart);
 }

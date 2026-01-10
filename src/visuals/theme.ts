@@ -74,6 +74,7 @@ export function generateCssVariables(theme: Theme): string {
   return `
     :root {
       --astro-color-bg: ${theme.backgroundColor};
+      --astro-color-paper: ${theme.paperColor};
       --astro-color-text: ${theme.textColor};
       --astro-color-sun: ${theme.sun};
       --astro-color-moon: ${theme.moon};

@@ -34,6 +34,12 @@ export interface Theme {
   houseLines: string;
   houseNumbers: string;
   angleLines: string;
+
+  // Element Colors
+  fire: string;
+  earth: string;
+  air: string;
+  water: string;
 }
 
 export const DEFAULT_THEME: Theme = {
@@ -67,7 +73,12 @@ export const DEFAULT_THEME: Theme = {
   
   houseLines: '#D3D3D3',
   houseNumbers: '#666666',
-  angleLines: '#333333'
+  angleLines: '#333333',
+
+  fire: '#e44d2e',
+  earth: '#955e1c',
+  air: '#87ceeb',
+  water: '#27ae60'
 };
 
 const PLANET_VARS = {
@@ -121,6 +132,13 @@ export const BASE_STYLES = `
     dominant-baseline: central;
     fill: var(--astro-color-text);
   }
+  .astro-zodiac-sign-bg {
+    stroke: none;
+  }
+  .astro-zodiac-sign-bg.fire { fill: var(--astro-color-fire); }
+  .astro-zodiac-sign-bg.earth { fill: var(--astro-color-earth); }
+  .astro-zodiac-sign-bg.air { fill: var(--astro-color-air); }
+  .astro-zodiac-sign-bg.water { fill: var(--astro-color-water); }
 
   /* Degree Rings */
   .astro-degree-tick {
@@ -249,6 +267,11 @@ export function generateCssVariables(theme: Theme): string {
       --astro-color-aspect-square: ${theme.aspectSquare};
       --astro-color-aspect-sextile: ${theme.aspectSextile};
       --astro-color-aspect-minor: ${theme.aspectMinor};
+
+      --astro-color-fire: ${theme.fire};
+      --astro-color-earth: ${theme.earth};
+      --astro-color-air: ${theme.air};
+      --astro-color-water: ${theme.water};
       
       ${theme.zodiacIcons.map((color, i) => `--astro-color-zodiac-${i}: ${color};`).join('\n')}
     }

@@ -37,7 +37,8 @@ export function renderAstrothemeChart(chart: ChartData): string {
       { type: 'zodiacWheel', props: { 
           outerRadius: zodiacOuter, 
           innerRadius: zodiacInner, 
-          symbolRadius: zodiacInner + (zodiacBandWidth / 2)
+          symbolRadius: zodiacInner + (zodiacBandWidth / 2),
+          showSignBackgrounds: true
       } },
       
       { type: 'degreeRings', props: { 

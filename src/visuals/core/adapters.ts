@@ -24,7 +24,8 @@ registerComponent('zodiacWheel', (ctx, config) => {
   const c: ZodiacWheelConfig = {
       outerRadius: config.props?.outerRadius ?? ctx.radius,
       innerRadius: config.props?.innerRadius ?? (ctx.radius - 40),
-      symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 20)
+      symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 20),
+      showSignBackgrounds: config.props?.showSignBackgrounds
   };
   return drawZodiacWheel(ctx.cx, ctx.cy, ctx.rotationOffset, c);
 });

@@ -31,8 +31,7 @@ export function drawAspectLines(
     svg += `<line x1="${pt1.x}" y1="${pt1.y}" 
                   x2="${pt2.x}" y2="${pt2.y}" 
                   stroke="var(${colorVar})" 
-                  stroke-width="1" 
-                  stroke-opacity="0.6" />`;
+                  class="astro-aspect-line" />`;
   });
 
   svg += '</g>';

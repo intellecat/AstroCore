@@ -20,14 +20,14 @@ export function drawDegreeRings(
 
   for (let i = 0; i < 360; i++) {
     let tickLength = config.tickSmall;
-    let opacity = 0.2;
+    let className = 'astro-degree-tick';
 
     if (i % 10 === 0) {
       tickLength = config.tickLarge;
-      opacity = 0.5;
+      className += ' major';
     } else if (i % 5 === 0) {
       tickLength = config.tickMedium;
-      opacity = 0.3;
+      className += ' medium';
     }
 
     const p1 = polarToCartesian(cx, cy, config.degreeRadius, i, rotationOffset);
@@ -35,9 +35,7 @@ export function drawDegreeRings(
 
     svg += `<line x1="${p1.x}" y1="${p1.y}" 
                   x2="${p2.x}" y2="${p2.y}" 
-                  stroke="var(--astro-color-text)" 
-                  stroke-width="0.5" 
-                  stroke-opacity="${opacity}" />`;
+                  class="${className}" />`;
   }
 
   svg += '</g>';

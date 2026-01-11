@@ -70,6 +70,155 @@ export const DEFAULT_THEME: Theme = {
   angleLines: '#333333'
 };
 
+const PLANET_VARS = {
+  sun: '--astro-color-sun',
+  moon: '--astro-color-moon',
+  mercury: '--astro-color-mercury',
+  venus: '--astro-color-venus',
+  mars: '--astro-color-mars',
+  jupiter: '--astro-color-jupiter',
+  saturn: '--astro-color-saturn',
+  uranus: '--astro-color-uranus',
+  neptune: '--astro-color-neptune',
+  pluto: '--astro-color-pluto',
+  chiron: '--astro-color-chiron',
+  'mean-node': '--astro-color-mean-node',
+  'true-node': '--astro-color-true-node',
+  'lilith-mean': '--astro-color-mean-lilith',
+  'lilith-true': '--astro-color-mean-lilith',
+  vertex: '--astro-color-vertex',
+  'anti-vertex': '--astro-color-anti-vertex',
+  'pars-fortunae': '--astro-color-pars-fortunae'
+};
+
+const PLANET_CSS = Object.entries(PLANET_VARS).map(([key, _var]) => `
+  .astro-planet-${key} { fill: var(${_var}); stroke: var(${_var}); }
+  .astro-planet-${key} .astro-marker { stroke: var(${_var}); }
+`).join('\n');
+
+export const BASE_STYLES = `
+  /* Global */
+  text {
+    font-family: sans-serif;
+    fill: var(--astro-color-text);
+  }
+
+  /* Zodiac Wheel */
+  .astro-zodiac-ring {
+    fill: none;
+    stroke: var(--astro-color-text);
+    stroke-opacity: 0.2;
+    stroke-width: 1px;
+  }
+  .astro-zodiac-line {
+    stroke: var(--astro-color-text);
+    stroke-opacity: 0.2;
+    stroke-width: 1px;
+  }
+  .astro-zodiac-glyph {
+    font-size: 22px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: var(--astro-color-text);
+  }
+
+  /* Degree Rings */
+  .astro-degree-tick {
+    stroke: var(--astro-color-text);
+    stroke-width: 0.5px;
+    opacity: 0.2;
+  }
+  .astro-degree-tick.major {
+    opacity: 0.5;
+  }
+  .astro-degree-tick.medium {
+    opacity: 0.3;
+  }
+
+  /* House Lines */
+  .astro-house-ring {
+    fill: none;
+    stroke: var(--astro-color-text);
+    stroke-opacity: 0.1;
+  }
+  .astro-house-line {
+    stroke: var(--astro-color-text);
+    stroke-width: 0.8px;
+    opacity: 0.2;
+    stroke-dasharray: 3,3;
+  }
+  .astro-house-line.angle {
+    stroke-width: 1.5px;
+    opacity: 0.5;
+    stroke-dasharray: none;
+  }
+  .astro-house-label {
+    fill: var(--astro-color-text);
+    font-size: 8px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.4;
+  }
+  .astro-angle-label {
+    fill: var(--astro-color-text);
+    font-size: 7px;
+    font-weight: bold;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.6;
+  }
+  .astro-angle-degree {
+    fill: var(--astro-color-text);
+    font-size: 6px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.4;
+  }
+
+  /* Planet Ring */
+  .astro-planet-symbol {
+    font-size: 20px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: inherit; /* Inherit from group */
+    stroke: none;
+  }
+  .astro-planet-tick {
+    stroke-width: 0.8px;
+    stroke-opacity: 0.6;
+  }
+  .astro-planet-indicator {
+    font-size: 8px;
+    fill: inherit; /* Inherit from group */
+    stroke: none;
+  }
+  .astro-planet-degree {
+    font-size: 8px;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.6;
+    fill: var(--astro-color-text);
+    stroke: none;
+  }
+
+  /* Markers */
+  .astro-marker {
+    stroke-width: 0.8px; 
+    stroke-opacity: 0.4;
+    stroke: var(--astro-color-text); /* Fallback if not overridden */
+  }
+
+  /* Aspect Lines */
+  .astro-aspect-line {
+    stroke-width: 1px;
+    stroke-opacity: 0.6;
+    fill: none;
+  }
+
+  /* Semantic Planet Colors */
+  ${PLANET_CSS}
+`;
+
 export function generateCssVariables(theme: Theme): string {
   return `
     :root {

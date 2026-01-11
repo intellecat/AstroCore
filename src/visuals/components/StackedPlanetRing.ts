@@ -10,17 +10,14 @@ const UNICODE_MAP: Record<string, string> = {
   [BodyId.Vertex]: 'Vx', [BodyId.AntiVertex]: 'Av',
 };
 
-const COLOR_MAP: Record<string, string> = {
-  [BodyId.Sun]: 'var(--astro-color-sun)', [BodyId.Moon]: 'var(--astro-color-moon)', [BodyId.Mercury]: 'var(--astro-color-mercury)',
-  [BodyId.Venus]: 'var(--astro-color-venus)', [BodyId.Mars]: 'var(--astro-color-mars)', [BodyId.Jupiter]: 'var(--astro-color-jupiter)',
-  [BodyId.Saturn]: 'var(--astro-color-saturn)', [BodyId.Uranus]: 'var(--astro-color-uranus)', [BodyId.Neptune]: 'var(--astro-color-neptune)',
-  [BodyId.Pluto]: 'var(--astro-color-pluto)', [BodyId.MeanNode]: 'var(--astro-color-mean-node)', [BodyId.TrueNode]: 'var(--astro-color-true-node)',
-  [BodyId.LilithMean]: 'var(--astro-color-mean-lilith)', [BodyId.LilithTrue]: 'var(--astro-color-mean-lilith)',
-};
+// Helper to convert BodyId to CSS class suffix
+function getBodyClass(id: string): string {
+    return 'astro-planet-' + id.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}
 
 export interface StackedRingLayout {
-    symbolStartRadius: number; // The radius for the first orbit (radialOffset = 0)
-    orbitStep: number; // Distance between "stacks" or orbits
+    symbolStartRadius: number; 
+    orbitStep: number; 
     tickStartRadius: number;
     tickLength: number;
 }
@@ -39,35 +36,35 @@ export function drawStackedPlanetRing(
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
     const char = UNICODE_MAP[planet.id] || '?';
-    const color = COLOR_MAP[planet.id] || 'var(--astro-color-text)';
     
-    // 1. Symbol Position (Collision Aware)
-    // We subtract because in our layout model, "stacking" usually goes inwards from the symbolStartRadius
+    const planetClass = getBodyClass(planet.id);
+    
     const r = layout.symbolStartRadius - (adj.radialOffset * layout.orbitStep);
     const symPos = polarToCartesian(cx, cy, r, adj.adjustedLongitude, rotationOffset);
     
-    // 2. Simple Marker Logic
     const markerStartPos = polarToCartesian(cx, cy, layout.tickStartRadius, adj.originalLongitude, rotationOffset);
     const markerEndPos = polarToCartesian(cx, cy, layout.tickStartRadius - layout.tickLength, adj.originalLongitude, rotationOffset);
 
-    // Draw Tick (Colored)
-    svg += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
+    // Group Content
+    let groupContent = '';
+
+    // Draw Tick
+    groupContent += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
                   x2="${markerEndPos.x}" y2="${markerEndPos.y}" 
-                  stroke="${color}" 
-                  stroke-width="1.5" 
-                  stroke-opacity="0.8" />`;
+                  class="astro-marker" />`;
 
     // Symbol
-    svg += `<text x="${symPos.x}" y="${symPos.y}" 
-                  fill="${color}" 
+    groupContent += `<text x="${symPos.x}" y="${symPos.y}" 
                   font-size="18" 
-                  text-anchor="middle" 
-                  dominant-baseline="central">${char}</text>`;
+                  class="astro-planet-symbol">${char}</text>`;
     
     if (planet.id.includes('Mean') || planet.id.includes('True')) {
         const indicator = planet.id.includes('Mean') ? 'm' : 't';
-        svg += `<text x="${symPos.x + 7}" y="${symPos.y - 7}" fill="${color}" font-size="7">${indicator}</text>`;
+        groupContent += `<text x="${symPos.x + 7}" y="${symPos.y - 7}" font-size="7" class="astro-planet-indicator">${indicator}</text>`;
     }
+    
+    // Wrap in Semantic Group
+    svg += `<g class="${planetClass}">${groupContent}</g>`;
   });
 
   svg += '</g>';

@@ -1,5 +1,5 @@
 import { ChartData, BodyId } from '../../core/types.js';
-import { Theme, DEFAULT_THEME, generateCssVariables } from '../theme.js';
+import { Theme, DEFAULT_THEME, generateCssVariables, BASE_STYLES } from '../theme.js';
 import { getAscendantOffset } from '../geometry.js';
 import { SVG_SYMBOLS } from '../symbols.js';
 
@@ -80,7 +80,7 @@ export function createChart(
                       style="background-color: ${theme.backgroundColor}">`);
   svgParts.push('<style>');
   svgParts.push(generateCssVariables(theme));
-  svgParts.push('text { font-family: sans-serif; }');
+  svgParts.push(BASE_STYLES);
   svgParts.push('</style>');
   
   svgParts.push('<defs>');

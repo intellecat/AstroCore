@@ -65,8 +65,7 @@ registerComponent('outerPlanetRing', (ctx, config) => {
         symbolRadius: config.props?.symbolRadius ?? ctx.radius,
         tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 20),
         tickLength: config.props?.tickLength ?? 10,
-        degreeRadius: config.props?.degreeRadius ?? ctx.radius,
-        markerColor: '#FF4500' // Default transit color, or could be 'PLANET'
+        degreeRadius: config.props?.degreeRadius ?? ctx.radius
     };
 
     return drawPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, c, {
@@ -97,9 +96,10 @@ registerComponent('planetRing', (ctx, config) => {
         symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 75),
         degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 95),
         tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 45),
-        tickLength: config.props?.tickLength ?? 10,
-        // Default markerColor is undefined (text color)
+        tickLength: config.props?.tickLength ?? 10
     };
+
+    const avoidHouses = config.props?.avoidHouses ?? true;
 
     return drawPlanetRing(
         ctx.cx, ctx.cy, 
@@ -107,7 +107,7 @@ registerComponent('planetRing', (ctx, config) => {
         ctx.rotationOffset, 
         c, 
         {
-            houses: ctx.primary.houses, // Avoid primary houses
+            houses: avoidHouses ? ctx.primary.houses : [], 
             markerRenderer: config.props?.markerRenderer
         }
     );

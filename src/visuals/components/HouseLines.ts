@@ -23,7 +23,7 @@ export function drawHouseLines(
   const showLabels = config.showLabels ?? true;
 
   // House Ring circle
-  svg += `<circle cx="${cx}" cy="${cy}" r="${startRadius}" fill="none" stroke="var(--astro-color-text)" stroke-opacity="0.1" />`;
+  svg += `<circle cx="${cx}" cy="${cy}" r="${startRadius}" class="astro-house-ring" />`;
 
   houses.forEach((house, i) => {
     const nextHouse = houses[(i + 1) % houses.length];
@@ -33,15 +33,11 @@ export function drawHouseLines(
     const outerPoint = polarToCartesian(cx, cy, endRadius, house.longitude, rotationOffset);
     
     const isAngle = [1, 4, 7, 10].includes(house.house);
-    const strokeWidth = isAngle ? 1.5 : 0.8;
-    const opacity = isAngle ? 0.5 : 0.2;
+    const lineClass = isAngle ? 'astro-house-line angle' : 'astro-house-line';
 
     svg += `<line x1="${innerPoint.x}" y1="${innerPoint.y}" 
                   x2="${outerPoint.x}" y2="${outerPoint.y}" 
-                  stroke="var(--astro-color-text)" 
-                  stroke-width="${strokeWidth}" 
-                  stroke-opacity="${opacity}" 
-                  stroke-dasharray="${isAngle ? '' : '3,3'}" />`;
+                  class="${lineClass}" />`;
 
     if (showLabels) {
         // ANGLE LABELS (ASC, MC, etc)
@@ -55,18 +51,10 @@ export function drawHouseLines(
             }
             
             const labelPos = polarToCartesian(cx, cy, config.angleLabelRadius, house.longitude, rotationOffset);
-            svg += `<text x="${labelPos.x}" y="${labelPos.y}" 
-                            fill="var(--astro-color-text)" 
-                            font-size="7" font-weight="bold"
-                            text-anchor="middle" dominant-baseline="middle" 
-                            opacity="0.6">${label}</text>`;
+            svg += `<text x="${labelPos.x}" y="${labelPos.y}" class="astro-angle-label">${label}</text>`;
             
             const degPos = polarToCartesian(cx, cy, config.angleLabelRadius - 10, house.longitude, rotationOffset);
-            svg += `<text x="${degPos.x}" y="${degPos.y}" 
-                            fill="var(--astro-color-text)" 
-                            font-size="6"
-                            text-anchor="middle" dominant-baseline="middle" 
-                            opacity="0.4">${Math.floor(house.degree)}°</text>`;
+            svg += `<text x="${degPos.x}" y="${degPos.y}" class="astro-angle-degree">${Math.floor(house.degree)}°</text>`;
         }
 
         // House Number
@@ -77,12 +65,7 @@ export function drawHouseLines(
 
         const textPos = polarToCartesian(cx, cy, textRadius, midLong, rotationOffset);
         
-        svg += `<text x="${textPos.x}" y="${textPos.y}" 
-                      fill="var(--astro-color-text)" 
-                      font-size="8" 
-                      text-anchor="middle" 
-                      dominant-baseline="middle" 
-                      opacity="0.4">${house.house}</text>`;
+        svg += `<text x="${textPos.x}" y="${textPos.y}" class="astro-house-label">${house.house}</text>`;
     }
   });
 

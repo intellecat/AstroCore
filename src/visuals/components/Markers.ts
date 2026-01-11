@@ -1,11 +1,11 @@
 import { Point } from '../geometry.js';
 
-export type MarkerRenderer = (start: Point, target: Point, length: number) => string;
+export type MarkerRenderer = (start: Point, target: Point, length: number, color?: string) => string;
 
 /**
  * Default implementation: A straight line (sloping if needed) of fixed length.
  */
-export function drawLineMarker(start: Point, target: Point, length: number): string {
+export function drawLineMarker(start: Point, target: Point, length: number, color: string = 'var(--astro-color-text)'): string {
   const dx = target.x - start.x;
   const dy = target.y - start.y;
   const dist = Math.sqrt(dx * dx + dy * dy);
@@ -19,7 +19,7 @@ export function drawLineMarker(start: Point, target: Point, length: number): str
 
   return `<line x1="${start.x}" y1="${start.y}" 
                 x2="${endX}" y2="${endY}" 
-                stroke="var(--astro-color-text)" 
+                stroke="${color}" 
                 stroke-width="0.8" 
-                stroke-opacity="0.4" />`;
+                stroke-opacity="0.6" />`;
 }

@@ -2,10 +2,9 @@ import { registerComponent, RenderContext, ComponentConfig } from './engine.js';
 import { drawZodiacWheel, ZodiacWheelConfig } from '../components/ZodiacWheel.js';
 import { drawDegreeRings, DegreeRingsConfig } from '../components/DegreeRings.js';
 import { drawHouseLines, HouseLinesConfig } from '../components/HouseLines.js';
-import { drawOuterPlanetRing, OuterRingLayout } from '../components/OuterPlanetRing.js';
+import { drawPlanetRing, PlanetRingConfig } from '../components/PlanetRing.js';
 import { drawStackedPlanetRing, StackedRingLayout } from '../components/StackedPlanetRing.js';
 import { drawAspectLines, AspectLinesConfig } from '../components/AspectLines.js';
-import { drawPlanetGlyphs, PlanetGlyphsConfig } from '../components/PlanetGlyphs.js';
 import { calculateDualAspects } from '../../core/aspects.js';
 import { ChartData, BodyId } from '../../core/types.js';
 
@@ -45,15 +44,11 @@ registerComponent('degreeRings', (ctx, config) => {
 registerComponent('houseLines', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
-    // Default logic: lines go from 'radius' to 'endRadius'.
-    // If only 'radius' is given (typical for Natal), endRadius defaults to something logical (Zodiac Inner).
-    // But since we are declarative now, we prefer explicit props or defaults relative to ctx.
-    
-    const radius = config.props?.radius ?? (ctx.radius * 0.5); // Inner ring
+    const radius = config.props?.radius ?? (ctx.radius * 0.5); 
     
     const c: HouseLinesConfig = {
         radius: config.props?.startRadius ?? radius,
-        endRadius: config.props?.endRadius ?? (ctx.radius - 40), // Default to Zodiac Inner
+        endRadius: config.props?.endRadius ?? (ctx.radius - 40),
         showLabels: config.props?.showLabels,
         labelRadius: config.props?.labelRadius,
         angleLabelRadius: config.props?.angleLabelRadius ?? (ctx.radius * 0.45)
@@ -62,18 +57,22 @@ registerComponent('houseLines', (ctx, config) => {
     return drawHouseLines(ctx.cx, ctx.cy, dataSource.houses, ctx.rotationOffset, c);
 });
 
-// 5. Outer Planet Ring (Transit Style)
+// 5. Outer Planet Ring (Transit/Modern Style)
 registerComponent('outerPlanetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
-    const layout: OuterRingLayout = {
+    const c: PlanetRingConfig = {
         symbolRadius: config.props?.symbolRadius ?? ctx.radius,
         tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 20),
         tickLength: config.props?.tickLength ?? 10,
-        degreeRadius: config.props?.degreeRadius ?? ctx.radius
+        degreeRadius: config.props?.degreeRadius ?? ctx.radius,
+        markerColor: '#FF4500' // Default transit color, or could be 'PLANET'
     };
 
-    return drawOuterPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, layout);
+    return drawPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, c, {
+        houses: [], // No house avoidance for outer rings usually
+        markerRenderer: config.props?.markerRenderer
+    });
 });
 
 // 6. Stacked Planet Ring (Synastry/Natal Style)
@@ -94,26 +93,28 @@ registerComponent('stackedPlanetRing', (ctx, config) => {
 registerComponent('planetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
-    const c: PlanetGlyphsConfig = {
-        planetSymbol: config.props?.symbolRadius ?? (ctx.radius - 75),
-        planetDegree: config.props?.degreeRadius ?? (ctx.radius - 95),
-        planetTickStart: config.props?.tickStartRadius ?? (ctx.radius - 45),
-        planetTickLength: config.props?.tickLength ?? 10
+    const c: PlanetRingConfig = {
+        symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 75),
+        degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 95),
+        tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 45),
+        tickLength: config.props?.tickLength ?? 10,
+        // Default markerColor is undefined (text color)
     };
 
-    return drawPlanetGlyphs(
+    return drawPlanetRing(
         ctx.cx, ctx.cy, 
         dataSource.bodies, 
-        ctx.primary.houses, // Always use primary houses for collision context
         ctx.rotationOffset, 
         c, 
-        config.props?.markerRenderer
+        {
+            houses: ctx.primary.houses, // Avoid primary houses
+            markerRenderer: config.props?.markerRenderer
+        }
     );
 });
 
 // 7. Aspect Lines
 registerComponent('aspectLines', (ctx, config) => {
-    // Determine which bodies to aspect
     let aspects;
     const MAIN_PLANETS = [
         BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
@@ -121,12 +122,10 @@ registerComponent('aspectLines', (ctx, config) => {
     ];
 
     if (config.dataSource === 'combined' && ctx.secondary) {
-        // Synastry / Transit Aspects
         const bodiesA = ctx.primary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
         const bodiesB = ctx.secondary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
         aspects = calculateDualAspects(bodiesA, bodiesB); 
     } else {
-        // Natal Aspects
         aspects = ctx.primary.aspects;
     }
 

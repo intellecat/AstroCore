@@ -1,0 +1,53 @@
+:root {
+  /* Backgrounds */
+  --astro-color-bg: #ffffff;
+  --astro-color-paper: #ffffff;
+  --astro-color-text: #333333;
+
+  /* Planets */
+  --astro-color-sun: #FFD700;
+  --astro-color-moon: #909090;
+  --astro-color-mercury: #87CEEB;
+  --astro-color-venus: #FF69B4;
+  --astro-color-mars: #FF4500;
+  --astro-color-jupiter: #DAA520;
+  --astro-color-saturn: #696969;
+  --astro-color-uranus: #40E0D0;
+  --astro-color-neptune: #4169E1;
+  --astro-color-pluto: #8B0000;
+  --astro-color-chiron: #9ACD32;
+  --astro-color-mean-node: #A52A2A;
+  --astro-color-true-node: #A52A2A;
+  --astro-color-mean-lilith: #000000;
+  --astro-color-vertex: #666666;
+  --astro-color-anti-vertex: #666666;
+  --astro-color-pars-fortunae: #333333;
+
+  /* Aspects */
+  --astro-color-aspect-conj: #FFD700;
+  --astro-color-aspect-opp: #FF4500;
+  --astro-color-aspect-trine: #32CD32;
+  --astro-color-aspect-square: #FF0000;
+  --astro-color-aspect-sextile: #1E90FF;
+  --astro-color-aspect-minor: #A9A9A9;
+
+  /* Elements */
+  --astro-color-fire: #e44d2e;
+  --astro-color-earth: #955e1c;
+  --astro-color-air: #87ceeb;
+  --astro-color-water: #27ae60;
+
+  /* Zodiac Icons */
+  --astro-color-zodiac-0: #333333;
+  --astro-color-zodiac-1: #333333;
+  --astro-color-zodiac-2: #333333;
+  --astro-color-zodiac-3: #333333;
+  --astro-color-zodiac-4: #333333;
+  --astro-color-zodiac-5: #333333;
+  --astro-color-zodiac-6: #333333;
+  --astro-color-zodiac-7: #333333;
+  --astro-color-zodiac-8: #333333;
+  --astro-color-zodiac-9: #333333;
+  --astro-color-zodiac-10: #333333;
+  --astro-color-zodiac-11: #333333;
+}

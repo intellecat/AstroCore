@@ -1,4 +1,7 @@
 /* Global */
+.astro-chart {
+  background-color: var(--astro-color-bg);
+}
 text {
   font-family: sans-serif;
   fill: var(--astro-color-text);

@@ -1,22 +1,20 @@
-import { ChartData, BodyId } from '../../core/types.js';
-import { Theme, DEFAULT_THEME, generateCssVariables, BASE_STYLES } from '../theme.js';
+import { ChartData } from '../../core/types.js';
 import { getAscendantOffset } from '../geometry.js';
 import { SVG_SYMBOLS } from '../symbols.js';
+import { loadTheme } from '../theme-loader.js';
 
 // --- Configuration Types ---
 
 export interface ComponentConfig {
   type: string;
-  // Dynamic binding instructions
   dataSource?: 'primary' | 'secondary' | 'combined'; 
-  // Static visual properties (radius, ticks, etc.)
   props?: Record<string, any>;
 }
 
 export interface ChartDefinition {
   width?: number;
   height?: number;
-  theme?: Theme;
+  themePath?: string; // Path to custom CSS file
   components: ComponentConfig[];
 }
 
@@ -24,14 +22,13 @@ export interface ChartDefinition {
 
 export interface RenderContext {
   primary: ChartData;
-  secondary?: ChartData; // For synastry/transit
+  secondary?: ChartData;
   width: number;
   height: number;
   cx: number;
   cy: number;
   radius: number;
-  rotationOffset: number; // Derived from primary Ascendant
-  theme: Theme;
+  rotationOffset: number;
 }
 
 // --- Component Registry ---
@@ -56,7 +53,6 @@ export function createChart(
   const cx = width / 2;
   const cy = height / 2;
   const radius = Math.min(width, height) * 0.45;
-  const theme = definition.theme ?? DEFAULT_THEME;
 
   // 1. Prepare Context
   const context: RenderContext = {
@@ -67,20 +63,21 @@ export function createChart(
     cx,
     cy,
     radius,
-    rotationOffset: getAscendantOffset(primaryData.angles.Asc),
-    theme
+    rotationOffset: getAscendantOffset(primaryData.angles.Asc)
   };
 
   const svgParts: string[] = [];
 
-  // 2. Header & Defs
+  // 2. Header & Styles
+  const cssContent = loadTheme(definition.themePath);
+
   svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" 
+                      class="astro-chart"
                       viewBox="0 0 ${width} ${height}" 
-                      width="${width}" height="${height}"
-                      style="background-color: ${theme.backgroundColor}">`);
+                      width="${width}" height="${height}">`);
+  
   svgParts.push('<style>');
-  svgParts.push(generateCssVariables(theme));
-  svgParts.push(BASE_STYLES);
+  svgParts.push(cssContent);
   svgParts.push('</style>');
   
   svgParts.push('<defs>');

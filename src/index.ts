@@ -3,7 +3,6 @@ export * from './calculator.js';
 export * from './visuals/renderer.js';
 export * from './visuals/transit-renderer.js';
 export * from './visuals/synastry-renderer.js';
-export * from './visuals/theme.js';
 export * from './core/types.js';
 export * from './core/planets.js';
 export * from './core/houses.js';

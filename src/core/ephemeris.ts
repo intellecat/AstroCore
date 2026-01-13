@@ -1,15 +1,16 @@
 import { 
-  Planet, 
-  Asteroid, 
   calculatePosition, 
   calculateHouses, 
   dateToJulianDay,
-  CalculationFlag,
-  // @ts-ignore - Assuming these are newly added and might not have types in local cache yet
   setSiderealMode,
-  // @ts-ignore
   setTopocentric
 } from '@swisseph/node';
+import { 
+  Planet, 
+  Asteroid, 
+  CalculationFlag,
+  HouseSystem as SweHouseSystem
+} from '@swisseph/core';
 import { BodyId, GeoLocation, HouseSystem, SiderealMode } from './types.js';
 
 // Mapping BodyId to SwissEph Integers
@@ -97,7 +98,8 @@ export function getHouses(
   lng: number,
   system: HouseSystem
 ): SweHouseResult {
-  return calculateHouses(jd, lat, lng, system) as unknown as SweHouseResult;
+  // Cast local HouseSystem string to library HouseSystem (compatible strings)
+  return calculateHouses(jd, lat, lng, system as unknown as SweHouseSystem) as unknown as SweHouseResult;
 }
 
 export { dateToJulianDay, CalculationFlag };

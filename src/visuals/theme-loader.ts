@@ -8,8 +8,8 @@ export function loadTheme(customThemePath?: string): string {
     const __dirname = path.dirname(__filename);
     
     // Default Styles Path (relative to this loader file)
-    // Assuming structure: src/visuals/theme-loader.ts -> ../styles/
-    const stylesDir = path.resolve(__dirname, '../styles');
+    // Assuming structure: src/visuals/theme-loader.ts -> ./styles/
+    const stylesDir = path.resolve(__dirname, './styles');
     
     const base = fs.readFileSync(path.join(stylesDir, 'astro-base.css'), 'utf-8');
     const defaultTheme = fs.readFileSync(path.join(stylesDir, 'astro-theme-light.css'), 'utf-8');

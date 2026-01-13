@@ -15,8 +15,8 @@ registerComponent('circle', (ctx, config) => {
   const r = config.props?.radius ?? ctx.radius;
   return `<circle cx="${ctx.cx}" cy="${ctx.cy}" r="${r}" 
             fill="${config.props?.fill ?? 'none'}" 
-            stroke="${config.props?.stroke ?? 'none'}" 
-            stroke-opacity="${config.props?.strokeOpacity ?? 1}" />`;
+            stroke="${config.props?.stroke ?? 'var(--astro-color-text)'}" 
+            stroke-opacity="${config.props?.strokeOpacity ?? 0.1}" />`;
 });
 
 // 2. Zodiac Wheel

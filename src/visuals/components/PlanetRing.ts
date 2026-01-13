@@ -56,8 +56,7 @@ export function drawPlanetRing(
     const markerStartPos = polarToCartesian(cx, cy, config.tickStartRadius, adj.originalLongitude, rotationOffset);
 
     // Draw Tick
-    // Pass undefined for color to let CSS control it via class
-    const markerSvg = markerRenderer(markerStartPos, symPos, config.tickLength, undefined);
+    const markerSvg = markerRenderer(markerStartPos, symPos, config.tickLength, { x: cx, y: cy });
 
     let groupContent = '';
     

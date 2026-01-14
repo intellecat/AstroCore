@@ -76,7 +76,7 @@ export function resolveCollisions(
     for (let i = 0; i < n; i++) {
         const j = (i + 1) % n;
         const dist = clockwiseDist(data[i].current, data[j].current);
-        if (dist > 350) { 
+        if (dist > 300) { 
             data[j].current = norm(data[i].current + minDistance);
             moved = true;
         }

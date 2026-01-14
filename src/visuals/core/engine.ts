@@ -14,7 +14,7 @@ export interface ComponentConfig {
 export interface ChartDefinition {
   width?: number;
   height?: number;
-  themePath?: string; // Path to custom CSS file
+  themes?: string[]; // Array of filenames or paths
   components: ComponentConfig[];
 }
 
@@ -69,7 +69,7 @@ export function createChart(
   const svgParts: string[] = [];
 
   // 2. Header & Styles
-  const cssContent = loadTheme(definition.themePath);
+  const cssContent = loadTheme(definition.themes);
 
   svgParts.push(`<svg xmlns="http://www.w3.org/2000/svg" 
                       class="astro-chart"

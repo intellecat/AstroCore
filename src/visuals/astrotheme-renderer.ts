@@ -27,9 +27,7 @@ export function renderAstrothemeChart(chart: ChartData): string {
   const definition: ChartDefinition = {
     width,
     height,
-    components: [
-      { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
-      
+    components: [      
       // 1. Aspects Area
       { type: 'circle', props: { radius: aspectRadius, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
 
@@ -68,7 +66,8 @@ export function renderAstrothemeChart(chart: ChartData): string {
           tickStartRadius: houseOuter,
           tickLength: 20, 
           degreeRadius: planetOuter - 10,
-          avoidHouses: false
+          avoidHouses: false,
+          showMinutes: true
         } 
       },
       

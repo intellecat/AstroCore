@@ -19,9 +19,11 @@ function getBodyClass(id: string): string {
 export interface PlanetRingConfig {
     symbolRadius: number;
     degreeRadius: number;
+    minuteRadius?: number; // Optional radius for minutes text
     tickStartRadius: number;
     tickLength: number;
     symbolSize?: number; 
+    showMinutes?: boolean;
 }
 
 export function drawPlanetRing(
@@ -79,6 +81,16 @@ export function drawPlanetRing(
     
     groupContent += `<text x="${textPos.x}" y="${textPos.y}" 
                   class="astro-planet-degree">${Math.floor(planet.degree)}°</text>`;
+
+    // Minute Text (Optional)
+    if (config.showMinutes) {
+        const minuteVal = Math.floor((planet.degree % 1) * 60);
+        const minR = config.minuteRadius ?? (config.degreeRadius > config.symbolRadius ? config.degreeRadius + 15 : config.degreeRadius - 15);
+        const minPos = polarToCartesian(cx, cy, minR, adj.adjustedLongitude, rotationOffset);
+        
+        groupContent += `<text x="${minPos.x}" y="${minPos.y}" 
+                      class="astro-planet-minute">${minuteVal}'</text>`;
+    }
 
     // Wrap in Semantic Group
     svg += `<g class="${planetClass}">${groupContent}</g>`;

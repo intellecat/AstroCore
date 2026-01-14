@@ -66,7 +66,9 @@ registerComponent('outerPlanetRing', (ctx, config) => {
         symbolRadius: config.props?.symbolRadius ?? ctx.radius,
         tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 20),
         tickLength: config.props?.tickLength ?? 10,
-        degreeRadius: config.props?.degreeRadius ?? ctx.radius
+        degreeRadius: config.props?.degreeRadius ?? ctx.radius,
+        minuteRadius: config.props?.minuteRadius,
+        showMinutes: config.props?.showMinutes
     };
 
     return drawPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, c, {
@@ -96,8 +98,10 @@ registerComponent('planetRing', (ctx, config) => {
     const c: PlanetRingConfig = {
         symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 75),
         degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 95),
+        minuteRadius: config.props?.minuteRadius,
         tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 45),
-        tickLength: config.props?.tickLength ?? 10
+        tickLength: config.props?.tickLength ?? 10,
+        showMinutes: config.props?.showMinutes
     };
 
     const avoidHouses = config.props?.avoidHouses ?? true;

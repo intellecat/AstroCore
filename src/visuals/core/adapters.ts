@@ -10,7 +10,7 @@ import { ChartData, BodyId } from '../../core/types.js';
 
 // --- Adapters ---
 
-// 1. Background Circle
+// Background Circle
 registerComponent('circle', (ctx, config) => {
   const r = config.props?.radius ?? ctx.radius;
   return `<circle cx="${ctx.cx}" cy="${ctx.cy}" r="${r}" 
@@ -19,7 +19,7 @@ registerComponent('circle', (ctx, config) => {
             stroke-opacity="${config.props?.strokeOpacity ?? 0.1}" />`;
 });
 
-// 2. Zodiac Wheel
+// Zodiac Wheel
 registerComponent('zodiacWheel', (ctx, config) => {
   const c: ZodiacWheelConfig = {
       outerRadius: config.props?.outerRadius ?? ctx.radius,
@@ -30,7 +30,7 @@ registerComponent('zodiacWheel', (ctx, config) => {
   return drawZodiacWheel(ctx.cx, ctx.cy, ctx.rotationOffset, c);
 });
 
-// 3. Degree Rings
+// Degree Rings
 registerComponent('degreeRings', (ctx, config) => {
     const c: DegreeRingsConfig = {
         degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 40),
@@ -41,7 +41,7 @@ registerComponent('degreeRings', (ctx, config) => {
     return drawDegreeRings(ctx.cx, ctx.cy, ctx.rotationOffset, c);
 });
 
-// 4. House Lines
+// House Lines
 registerComponent('houseLines', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
@@ -58,28 +58,7 @@ registerComponent('houseLines', (ctx, config) => {
     return drawHouseLines(ctx.cx, ctx.cy, dataSource.houses, ctx.rotationOffset, c);
 });
 
-// 5. Outer Planet Ring (Transit/Modern Style)
-registerComponent('outerPlanetRing', (ctx, config) => {
-    const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
-    
-    const c: PlanetRingConfig = {
-        symbolRadius: config.props?.symbolRadius ?? ctx.radius,
-        tickStartRadius: config.props?.tickStartRadius ?? (ctx.radius - 20),
-        tickLength: config.props?.tickLength ?? 10,
-        degreeRadius: config.props?.degreeRadius ?? ctx.radius,
-        minuteRadius: config.props?.minuteRadius,
-        zodiacSignRadius: config.props?.zodiacSignRadius,
-        showMinutes: config.props?.showMinutes,
-        showZodiacSign: config.props?.showZodiacSign
-    };
-
-    return drawPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, c, {
-        houses: [], // No house avoidance for outer rings usually
-        markerRenderer: config.props?.markerRenderer
-    });
-});
-
-// 6. Stacked Planet Ring (Synastry/Natal Style)
+// Stacked Planet Ring (Synastry/Natal Style)
 registerComponent('stackedPlanetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
@@ -93,7 +72,7 @@ registerComponent('stackedPlanetRing', (ctx, config) => {
     return drawStackedPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, layout);
 });
 
-// 6b. Standard Planet Ring (Natal Style)
+// Standard Planet Ring (Natal Style)
 registerComponent('planetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
@@ -122,7 +101,7 @@ registerComponent('planetRing', (ctx, config) => {
     );
 });
 
-// 7. Aspect Lines
+// Aspect Lines
 registerComponent('aspectLines', (ctx, config) => {
     let aspects;
     const MAIN_PLANETS = [

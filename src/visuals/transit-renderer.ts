@@ -15,7 +15,7 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
     width,
     height,
     components: [
-      { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)' } },
+      // { type: 'circle', props: { radius: mainRadius, fill: 'var(--astro-color-paper)', stroke: 'none' } },
       
       // Transit Ring Boundary
       { type: 'circle', props: { radius: innerRadius, stroke: 'var(--astro-color-text)', strokeOpacity: 0.2 } },
@@ -48,13 +48,14 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
 
       // Outer Transit Ring
       { 
-        type: 'outerPlanetRing', 
+        type: 'planetRing', 
         dataSource: 'secondary',
         props: {
-            symbolRadius: mainRadius - 20,
+            symbolRadius: mainRadius - 25,
             tickStartRadius: innerRadius,
-            tickLength: 10,
-            degreeRadius: mainRadius - 8
+            tickLength: 8,
+            degreeRadius: mainRadius - 6,
+            avoidHouses: false
         }
       },
       

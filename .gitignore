@@ -1,5 +1,6 @@
-node_modules
-dist
-chart.svg
+node_modules/
+dist/
+*.svg
+src/test_*
 *.log
 .DS_Store

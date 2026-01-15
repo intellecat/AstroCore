@@ -48,7 +48,8 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData): strin
             startRadius: personBInnerRadius, 
             endRadius: personBOuterRadius,
             showLabels: true,
-            labelRadius: personBInnerRadius + 8
+            labelRadius: personBInnerRadius + 8,
+            angleLabelRadius: personBOuterRadius - 25
         }
       },
       {
@@ -70,7 +71,8 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData): strin
             startRadius: personAInnerRadius, 
             endRadius: personAOuterRadius,
             showLabels: true,
-            labelRadius: personAInnerRadius + 8
+            labelRadius: personAInnerRadius + 8,
+            angleLabelRadius: personAInnerRadius + 35
         }
       },
       {

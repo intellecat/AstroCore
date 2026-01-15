@@ -62,6 +62,12 @@ registerComponent('houseLines', (ctx, config) => {
 registerComponent('stackedPlanetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
+    let bodies = dataSource.bodies;
+    const includeBodies = config.props?.includeBodies;
+    if (includeBodies) {
+        bodies = bodies.filter(b => includeBodies.includes(b.id));
+    }
+
     const layout: StackedRingLayout = {
         symbolStartRadius: config.props?.symbolRadius ?? ctx.radius,
         orbitStep: config.props?.orbitStep ?? 18,
@@ -69,13 +75,19 @@ registerComponent('stackedPlanetRing', (ctx, config) => {
         tickLength: config.props?.tickLength ?? 10
     };
 
-    return drawStackedPlanetRing(ctx.cx, ctx.cy, dataSource.bodies, ctx.rotationOffset, layout);
+    return drawStackedPlanetRing(ctx.cx, ctx.cy, bodies, ctx.rotationOffset, layout);
 });
 
 // Standard Planet Ring (Natal Style)
 registerComponent('planetRing', (ctx, config) => {
     const dataSource = config.dataSource === 'secondary' && ctx.secondary ? ctx.secondary : ctx.primary;
     
+    let bodies = dataSource.bodies;
+    const includeBodies = config.props?.includeBodies;
+    if (includeBodies) {
+        bodies = bodies.filter(b => includeBodies.includes(b.id));
+    }
+
     const c: PlanetRingConfig = {
         symbolRadius: config.props?.symbolRadius ?? (ctx.radius - 75),
         degreeRadius: config.props?.degreeRadius ?? (ctx.radius - 95),
@@ -91,7 +103,7 @@ registerComponent('planetRing', (ctx, config) => {
 
     return drawPlanetRing(
         ctx.cx, ctx.cy, 
-        dataSource.bodies, 
+        bodies, 
         ctx.rotationOffset, 
         c, 
         {

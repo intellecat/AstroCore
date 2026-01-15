@@ -59,7 +59,8 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData): strin
             symbolRadius: personBOuterRadius - 25,
             orbitStep: 18,
             tickStartRadius: zodiacInnerRadius,
-            tickLength: 10
+            tickLength: 10,
+            includeBodies: chartB.meta.includeBodies
         }
       },
 
@@ -82,7 +83,8 @@ export function renderSynastryChart(chartA: ChartData, chartB: ChartData): strin
             symbolRadius: personAOuterRadius - 25,
             orbitStep: 18,
             tickStartRadius: personAOuterRadius,
-            tickLength: 10
+            tickLength: 10,
+            includeBodies: chartA.meta.includeBodies
         }
       },
 

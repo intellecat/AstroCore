@@ -1,6 +1,6 @@
 export * from './report.js';
 export * from './calculator.js';
-export * from './visuals/renderer.js';
+export * from './visuals/natal-renderer.js';
 export * from './visuals/transit-renderer.js';
 export * from './visuals/astrotheme-renderer.js';
 export * from './charts.js';

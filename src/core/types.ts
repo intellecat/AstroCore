@@ -143,6 +143,7 @@ export interface ChartData {
     zodiacType: ZodiacType;
     siderealMode?: SiderealMode;
     perspective: Perspective;
+    includeBodies?: BodyId[];
   }
 }
 

@@ -32,9 +32,10 @@ export function renderChart(chart: ChartData): string {
           symbolRadius: mainRadius - 75,
           degreeRadius: mainRadius - 95,
           tickStartRadius: mainRadius - 45,
-          tickLength: 10
+          tickLength: 10,
+          includeBodies: chart.meta.includeBodies
       } },
-      { type: 'aspectLines', props: { radius: mainRadius * 0.4, showAspectSymbol: true } }
+      { type: 'aspectLines', props: { radius: mainRadius * 0.4 } }
     ]
   };
 

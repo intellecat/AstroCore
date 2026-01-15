@@ -96,7 +96,8 @@ export function calculateChart(input: ChartInput): ChartData {
       houseSystem: system,
       zodiacType: input.zodiacType || ZodiacType.Tropical,
       siderealMode: input.siderealMode,
-      perspective
+      perspective,
+      includeBodies: input.aspectBodies
     }
   };
 }

@@ -1,35 +1,37 @@
 import { calculateChart } from './calculator.js';
-import { renderChart } from './visuals/renderer.js';
+import { renderChart } from './visuals/natal-renderer.js';
 import { renderTransitChart } from './visuals/transit-renderer.js';
 import { renderSynastryChart } from './visuals/synastry-renderer.js';
-import { GeoLocation } from './core/types.js';
+import { GeoLocation, BodyId } from './core/types.js';
 
 export interface ChartDataInput {
   date: string | Date;
   location: GeoLocation;
+  includeBodies?: BodyId[];
 }
 
 /**
  * Creates a standard Natal Chart SVG.
  */
 export function natalChart(input: ChartDataInput): string {
-  const chart = calculateChart(input);
+  const chart = calculateChart({ ...input, aspectBodies: input.includeBodies });
+  // Currently renderers use hardcoded ChartDefinitions. 
+  // We should update the natal-renderer.ts to pass includeBodies to the planetRing component.
   return renderChart(chart);
 }
 
 /**
  * Creates a Transit Chart SVG.
- * @param natalInput The birth data.
- * @param transitInput The transit date/location. Defaults to NOW at birth location if omitted.
  */
 export function transitChart(natalInput: ChartDataInput, transitInput?: ChartDataInput): string {
-  const natal = calculateChart(natalInput);
+  const natal = calculateChart({ ...natalInput, aspectBodies: natalInput.includeBodies });
   
   const tInput = transitInput || { 
     date: new Date(), 
-    location: natalInput.location 
+    location: natalInput.location,
+    includeBodies: natalInput.includeBodies
   };
-  const transit = calculateChart(tInput);
+  const transit = calculateChart({ ...tInput, aspectBodies: tInput.includeBodies });
   
   return renderTransitChart(natal, transit);
 }
@@ -38,8 +40,8 @@ export function transitChart(natalInput: ChartDataInput, transitInput?: ChartDat
  * Creates a Synastry Chart SVG.
  */
 export function synastryChart(personA: ChartDataInput, personB: ChartDataInput): string {
-  const chartA = calculateChart(personA);
-  const chartB = calculateChart(personB);
+  const chartA = calculateChart({ ...personA, aspectBodies: personA.includeBodies });
+  const chartB = calculateChart({ ...personB, aspectBodies: personB.includeBodies });
   
   return renderSynastryChart(chartA, chartB);
 }

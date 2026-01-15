@@ -43,7 +43,8 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
           symbolRadius: innerRadius - 60,
           degreeRadius: innerRadius - 75,
           tickStartRadius: innerRadius - 35,
-          tickLength: 8
+          tickLength: 8,
+          includeBodies: natalChart.meta.includeBodies
       } },
 
       // Outer Transit Ring
@@ -55,7 +56,8 @@ export function renderTransitChart(natalChart: ChartData, transitChart: ChartDat
             tickStartRadius: innerRadius,
             tickLength: 8,
             degreeRadius: mainRadius - 6,
-            avoidHouses: false
+            avoidHouses: false,
+            includeBodies: transitChart.meta.includeBodies
         }
       },
       

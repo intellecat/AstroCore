@@ -33,4 +33,21 @@ describe('AstroCore Integration', () => {
     expect(chart.angles.Asc).toBeDefined();
     expect(chart.angles.MC).toBeDefined();
   });
+
+  it('accepts Date object input', () => {
+    const input = {
+      date: new Date('2026-01-01T12:00:00Z'),
+      location: { latitude: 0, longitude: 0 }
+    };
+    const chart = calculateChart(input);
+    expect(chart).toBeDefined();
+  });
+
+  it('throws error for invalid date string', () => {
+    const input = {
+      date: 'invalid-date',
+      location: { latitude: 0, longitude: 0 }
+    };
+    expect(() => calculateChart(input)).toThrow(/Invalid date/);
+  });
 });

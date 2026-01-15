@@ -5,8 +5,8 @@ import { drawHouseLines, HouseLinesConfig } from '../components/HouseLines.js';
 import { drawPlanetRing, PlanetRingConfig } from '../components/PlanetRing.js';
 import { drawStackedPlanetRing, StackedRingLayout } from '../components/StackedPlanetRing.js';
 import { drawAspectLines, AspectLinesConfig } from '../components/AspectLines.js';
-import { calculateDualAspects } from '../../core/aspects.js';
-import { ChartData, BodyId } from '../../core/types.js';
+import { calculateDualAspects } from '@astrologer/astro-core';
+import { ChartData, BodyId } from '@astrologer/astro-core';
 
 // --- Adapters ---
 

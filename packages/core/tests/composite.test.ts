@@ -8,14 +8,14 @@ describe('Composite Charts', () => {
       bodies: [
         { id: BodyId.Sun, longitude: 0, degree: 0, sign: 'Aries', house: 1 } as any
       ],
-      houses: Array(12).fill(0).map((_, i) => ({ house: i + 1, longitude: i * 30, degree: 0, sign: '' }))
+      houses: Array(12).fill(0).map((_, i) => ({ house: i + 1, longitude: i * 30, degree: 0, sign: '', emoji: '' }))
     };
 
     const mockChartB: Partial<ChartData> = {
       bodies: [
         { id: BodyId.Sun, longitude: 20, degree: 20, sign: 'Aries', house: 1 } as any
       ],
-      houses: Array(12).fill(0).map((_, i) => ({ house: i + 1, longitude: i * 30 + 10, degree: 10, sign: '' }))
+      houses: Array(12).fill(0).map((_, i) => ({ house: i + 1, longitude: i * 30 + 10, degree: 10, sign: '', emoji: '' }))
     };
 
     const composite = calculateCompositeChart(mockChartA as ChartData, mockChartB as ChartData);

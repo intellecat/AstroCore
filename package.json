@@ -1,21 +1,15 @@
 {
-  "name": "astrocore",
-  "version": "1.0.0",
-  "description": "",
+  "name": "astrocore-monorepo",
+  "private": true,
   "type": "module",
-  "main": "index.js",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "build": "tsc -b"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
-    "@swisseph/core": "^1.1.2",
-    "@swisseph/node": "^1.2.0",
-    "@types/luxon": "^3.7.1",
-    "@types/node": "^25.0.3",
-    "luxon": "^3.7.2",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"
   }

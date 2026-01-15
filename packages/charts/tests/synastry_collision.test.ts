@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { resolveSynastryCollisions } from '../src/visuals/collision_synastry.js';
-import { CelestialPosition, BodyId } from '../src/core/types.js';
+import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 
 describe('Synastry Collision Resolver', () => {
   it('stacks close planets radially', () => {
@@ -27,7 +27,7 @@ describe('Synastry Collision Resolver', () => {
       { id: 'P1', longitude: 100 },
       { id: 'P2', longitude: 100 },
       { id: 'P3', longitude: 100 },
-    ];
+    ] as any as CelestialPosition[];
 
     const adjusted = resolveSynastryCollisions(planets as CelestialPosition[], 6);
 

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
-import { calculateChart } from '../src/calculator.js';
+import { calculateChart } from '@astrologer/astro-core';
 import { resolveCollisions } from '../src/visuals/collision.js';
-import { GeoLocation } from '../src/core/types.js';
+import { BodyId, GeoLocation } from '@astrologer/astro-core';
 
 interface StressCase {
     name: string;

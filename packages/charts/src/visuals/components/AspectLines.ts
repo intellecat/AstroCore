@@ -1,5 +1,5 @@
 import { polarToCartesian } from '../geometry.js';
-import { Aspect, AspectType } from '../../core/types.js';
+import { Aspect, AspectType } from '@astrologer/astro-core';
 
 export interface AspectLinesConfig {
   radius: number; // The boundary radius where lines attach

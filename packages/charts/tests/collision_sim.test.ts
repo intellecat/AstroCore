@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { resolveCollisions, degreeDiff } from '../src/visuals/collision.js';
-import { CelestialPosition, HouseCusp, BodyId } from '../src/core/types.js';
+import { CelestialPosition, HouseCusp, BodyId } from '@astrologer/astro-core';
 
 function clockwiseDist(d1: number, d2: number): number {
     return (d2 - d1 + 360) % 360;
@@ -44,10 +44,10 @@ describe('Collision Resolver Simulation', () => {
   });
 
   it('handles the 0/360 boundary (Aries Point crossover)', () => {
-    const planets: Partial<CelestialPosition>[] = [
+    const planets = [
       { id: 'P1', longitude: 358 },
       { id: 'P2', longitude: 2 },
-    ];
+    ] as any as CelestialPosition[];
 
     const adjusted = resolveCollisions(planets as CelestialPosition[], mockHouses, minDistance, houseBuffer);
     
@@ -62,9 +62,9 @@ describe('Collision Resolver Simulation', () => {
   });
 
   it('ensures no symbols overlap house cusps', () => {
-    const planets: Partial<CelestialPosition>[] = [
+    const planets = [
       { id: 'OnCusp', longitude: 30.1 } // Right on 2nd house cusp
-    ];
+    ] as any as CelestialPosition[];
 
     const adjusted = resolveCollisions(planets as CelestialPosition[], mockHouses, minDistance, houseBuffer);
     const p = adjusted[0];
@@ -74,13 +74,13 @@ describe('Collision Resolver Simulation', () => {
   });
 
   it('handles a Super Cluster (5 planets in 5 degrees)', () => {
-    const planets: Partial<CelestialPosition>[] = [
+    const planets = [
       { id: 'P1', longitude: 100 },
       { id: 'P2', longitude: 101 },
       { id: 'P3', longitude: 102 },
       { id: 'P4', longitude: 103 },
       { id: 'P5', longitude: 104 },
-    ];
+    ] as any as CelestialPosition[];
 
     const adjusted = resolveCollisions(planets as CelestialPosition[], mockHouses, 10, 4);
 
@@ -97,12 +97,12 @@ describe('Collision Resolver Simulation', () => {
 
   it('ensures global separation (no two planets on chart collide)', () => {
     // Two clusters that are far originally but pushed towards each other
-    const planets: Partial<CelestialPosition>[] = [
+    const planets = [
       { id: 'C1_P1', longitude: 100 },
       { id: 'C1_P2', longitude: 101 },
       { id: 'C2_P1', longitude: 115 },
       { id: 'C2_P2', longitude: 116 },
-    ];
+    ] as any as CelestialPosition[];
 
     // C1 width = 10. Center 100.5. Range [95.5, 105.5]
     // C2 width = 10. Center 115.5. Range [110.5, 120.5]

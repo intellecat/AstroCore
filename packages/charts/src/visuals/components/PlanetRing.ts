@@ -1,5 +1,5 @@
 import { polarToCartesian } from '../geometry.js';
-import { CelestialPosition, BodyId, HouseCusp, ZODIAC_SIGNS } from '../../core/types.js';
+import { CelestialPosition, BodyId, HouseCusp, ZODIAC_SIGNS } from '@astrologer/astro-core';
 import { resolveCollisions } from '../collision.js';
 import { MarkerRenderer, drawLineMarker } from './Markers.js';
 

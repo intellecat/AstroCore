@@ -1,5 +1,5 @@
 import { polarToCartesian } from '../geometry.js';
-import { CelestialPosition, BodyId } from '../../core/types.js';
+import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 import { resolveSynastryCollisions } from '../collision_synastry.js';
 
 const UNICODE_MAP: Record<string, string> = {

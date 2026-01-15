@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { resolveCollisions } from '../src/visuals/collision.js';
-import { CelestialPosition, BodyId } from '../src/core/types.js';
+import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 
 describe('Transit Collision Stability', () => {
   it('does not shift a solitary planet', () => {

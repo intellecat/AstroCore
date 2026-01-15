@@ -1,5 +1,5 @@
 import { polarToCartesian } from '../geometry.js';
-import { ZODIAC_SIGNS } from '../../core/types.js';
+import { ZODIAC_SIGNS } from '@astrologer/astro-core';
 
 export interface ZodiacWheelConfig {
   outerRadius: number;

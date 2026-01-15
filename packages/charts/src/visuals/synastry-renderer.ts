@@ -1,4 +1,4 @@
-import { ChartData } from '../core/types.js';
+import { ChartData } from '@astrologer/astro-core';
 import { createChart, ChartDefinition } from './core/engine.js';
 import './core/adapters.js';
 

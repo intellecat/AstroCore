@@ -1,4 +1,4 @@
-import { ChartData } from '../../core/types.js';
+import { ChartData } from '@astrologer/astro-core';
 import { getAscendantOffset } from '../geometry.js';
 import { SVG_SYMBOLS } from '../symbols.js';
 import { loadTheme } from '../theme-loader.js';

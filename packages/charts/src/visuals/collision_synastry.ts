@@ -1,4 +1,4 @@
-import { CelestialPosition } from '../core/types.js';
+import { CelestialPosition } from '@astrologer/astro-core';
 
 function clockwiseDist(d1: number, d2: number): number {
     return (d2 - d1 + 360) % 360;

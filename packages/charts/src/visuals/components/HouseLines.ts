@@ -1,5 +1,5 @@
 import { polarToCartesian } from '../geometry.js';
-import { HouseCusp } from '../../core/types.js';
+import { HouseCusp } from '@astrologer/astro-core';
 
 export interface HouseLinesConfig {
     radius: number;

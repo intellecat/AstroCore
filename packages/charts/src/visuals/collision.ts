@@ -1,4 +1,4 @@
-import { CelestialPosition, HouseCusp } from '../core/types.js';
+import { CelestialPosition, HouseCusp } from '@astrologer/astro-core';
 
 export function degreeDiff(d1: number, d2: number): number {
   let diff = Math.abs(d1 - d2);

@@ -1,13 +1,13 @@
-import { calculateChart } from './calculator.js';
+import { calculateChart } from '@astrologer/astro-core';
 import { renderChart } from './visuals/natal-renderer.js';
 import { renderTransitChart } from './visuals/transit-renderer.js';
 import { renderSynastryChart } from './visuals/synastry-renderer.js';
-import { GeoLocation, BodyId } from './core/types.js';
+import { GeoLocation, BodyId } from '@astrologer/astro-core';
 
 export interface ChartDataInput {
   date: string | Date;
   location: GeoLocation;
-  bodies?: BodyId[]; // Renamed from includeBodies
+  bodies?: BodyId[];
 }
 
 /**

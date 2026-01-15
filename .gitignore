@@ -1,6 +1,10 @@
 node_modules/
 dist/
 *.svg
-src/test_*
+**/src/test_*
+*.tsbuildinfo
+*.js.map
+*.test.d.ts
+*.test.js
 *.log
 .DS_Store

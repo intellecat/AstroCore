@@ -34,7 +34,7 @@ export function renderChart(chart: ChartData): string {
           tickStartRadius: mainRadius - 45,
           tickLength: 10
       } },
-      { type: 'aspectLines', props: { radius: mainRadius * 0.4 } }
+      { type: 'aspectLines', props: { radius: mainRadius * 0.4, showAspectSymbol: true } }
     ]
   };
 

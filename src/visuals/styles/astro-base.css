@@ -145,6 +145,12 @@ text {
   stroke-opacity: 0.6;
   fill: none;
 }
+.astro-aspect-symbol {
+  font-size: 14px;
+  text-anchor: middle;
+  dominant-baseline: central;
+  opacity: 1;
+}
 
 /* Semantic Planet Colors */
 .astro-planet-sun { fill: var(--astro-color-sun); stroke: var(--astro-color-sun); }

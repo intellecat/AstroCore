@@ -118,7 +118,8 @@ registerComponent('aspectLines', (ctx, config) => {
     }
 
     const c: AspectLinesConfig = {
-        radius: config.props?.radius ?? (ctx.radius * 0.4)
+        radius: config.props?.radius ?? (ctx.radius * 0.4),
+        showAspectSymbol: config.props?.showAspectSymbol
     };
     return drawAspectLines(ctx.cx, ctx.cy, aspects, ctx.rotationOffset, c);
 });

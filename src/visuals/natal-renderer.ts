@@ -33,7 +33,7 @@ export function renderChart(chart: ChartData): string {
           degreeRadius: mainRadius - 95,
           tickStartRadius: mainRadius - 45,
           tickLength: 10,
-          includeBodies: chart.meta.includeBodies
+          includeBodies: chart.meta.bodies
       } },
       { type: 'aspectLines', props: { radius: mainRadius * 0.4 } }
     ]

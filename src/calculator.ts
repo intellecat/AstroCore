@@ -26,7 +26,7 @@ export interface ChartInput {
   zodiacType?: ZodiacType;
   siderealMode?: SiderealMode;
   perspective?: Perspective;
-  aspectBodies?: BodyId[]; // New option
+  bodies?: BodyId[]; // Renamed from aspectBodies
 }
 
 export function calculateChart(input: ChartInput): ChartData {
@@ -62,16 +62,16 @@ export function calculateChart(input: ChartInput): ChartData {
   );
 
   // 4. Planets
-  const bodies = calculatePlanets(jd, houses, angles, flags);
+  const bodies = calculatePlanets(jd, houses, angles, flags, input.bodies);
 
   // 5. Aspects (FILTERED)
-  const defaultMainPlanets = [
+ const defaultMainPlanets = [
     BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
     BodyId.Jupiter, BodyId.Saturn, BodyId.Uranus, BodyId.Neptune, BodyId.Pluto
   ];
   
-  const bodiesForAspects = input.aspectBodies 
-    ? bodies.filter(b => input.aspectBodies!.includes(b.id))
+  const bodiesForAspects = input.bodies 
+    ? bodies
     : bodies.filter(b => defaultMainPlanets.includes(b.id));
 
   const aspects = calculateAspects(bodiesForAspects);
@@ -79,10 +79,9 @@ export function calculateChart(input: ChartInput): ChartData {
   // 6. Lunar Phase
   const sun = bodies.find(b => b.id === BodyId.Sun);
   const moon = bodies.find(b => b.id === BodyId.Moon);
-  const lunarPhase = calculateLunarPhase(
-    sun ? sun.longitude : 0, 
-    moon ? moon.longitude : 0
-  );
+  const lunarPhase = (sun && moon) ? calculateLunarPhase(sun.longitude, moon.longitude) : {
+      phaseName: 'Unknown', illumination: 0, age: 0, isWaxing: false
+  };
 
   return {
     bodies,
@@ -97,7 +96,7 @@ export function calculateChart(input: ChartInput): ChartData {
       zodiacType: input.zodiacType || ZodiacType.Tropical,
       siderealMode: input.siderealMode,
       perspective,
-      includeBodies: input.aspectBodies
+      bodies: input.bodies // Renamed in meta too? Or stick to includeBodies?
     }
   };
 }

@@ -1,5 +1,5 @@
 import { getBodyPosition, CalculationFlag } from './ephemeris.js';
-import { BodyId, CelestialPosition, HouseCusp, ChartAngles, ZODIAC_SIGNS } from './types.js';
+import { BodyId, CelestialPosition, HouseCusp, ChartAngles, ZODIAC_SIGNS, DEFAULT_PLANETS } from './types.js';
 
 function getSignData(longitude: number) {
   const index = Math.floor(((longitude + 360) % 360) / 30) % 12;
@@ -32,41 +32,65 @@ export function calculatePlanets(
   jd: number,
   houseCusps: HouseCusp[],
   angles: ChartAngles,
-  flags: number = CalculationFlag.Speed
+  flags: number = CalculationFlag.Speed,
+  customBodies?: BodyId[]
 ): CelestialPosition[] {
   const bodies: CelestialPosition[] = [];
+  const requested = new Set(customBodies || DEFAULT_PLANETS);
 
-  const standardIds = [
-    BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
-    BodyId.Jupiter, BodyId.Saturn, BodyId.Uranus, BodyId.Neptune, BodyId.Pluto,
-    BodyId.MeanNode, BodyId.TrueNode, BodyId.LilithMean, BodyId.LilithTrue, BodyId.Chiron
-  ];
-
-  for (const id of standardIds) {
-    const raw = getBodyPosition(id, jd, flags);
-    const equatorial = getBodyPosition(id, jd, flags | CalculationFlag.Equatorial);
-    
-    const house = getHousePlacement(raw.longitude, houseCusps);
-    const signData = getSignData(raw.longitude);
-
-    bodies.push({
-      id,
-      name: id,
-      degree: raw.longitude % 30,
-      longitude: raw.longitude,
-      latitude: raw.latitude,
-      declination: equatorial.declination || 0,
-      distance: raw.distance,
-      speed: raw.longitudeSpeed,
-      isRetrograde: raw.longitudeSpeed < 0,
-      house,
-      sign: signData.name,
-      emoji: signData.emoji
-    });
+  // 1. Identify which standard bodies need calculation
+  // (Either requested directly, or needed as dependency)
+  const needsCalc = new Set<BodyId>();
+  
+  // Dependencies
+  if (requested.has(BodyId.ParsFortunae)) {
+      needsCalc.add(BodyId.Sun);
+      needsCalc.add(BodyId.Moon);
+  }
+  if (requested.has(BodyId.SouthNode)) {
+      needsCalc.add(BodyId.MeanNode);
   }
 
-  // Helper for special points
+  // Add all requested standard bodies (that are not derived)
+  const DERIVED = [BodyId.SouthNode, BodyId.Vertex, BodyId.AntiVertex, BodyId.ParsFortunae];
+  requested.forEach(id => {
+      if (!DERIVED.includes(id)) needsCalc.add(id);
+  });
+
+  // Cache for positions (to avoid recalculating if Sun is both requested and needed for Part)
+  const posCache = new Map<BodyId, CelestialPosition>();
+
+  // 2. Calculate Standard Bodies
+  needsCalc.forEach(id => {
+      const raw = getBodyPosition(id, jd, flags);
+      const equatorial = getBodyPosition(id, jd, flags | CalculationFlag.Equatorial);
+      const house = getHousePlacement(raw.longitude, houseCusps);
+      const signData = getSignData(raw.longitude);
+
+      const body = {
+          id,
+          name: id,
+          degree: raw.longitude % 30,
+          longitude: raw.longitude,
+          latitude: raw.latitude,
+          declination: equatorial.declination || 0,
+          distance: raw.distance,
+          speed: raw.longitudeSpeed,
+          isRetrograde: raw.longitudeSpeed < 0,
+          house,
+          sign: signData.name,
+          emoji: signData.emoji
+      };
+      
+      posCache.set(id, body);
+      
+      // Add to result if explicitly requested
+      if (requested.has(id)) bodies.push(body);
+  });
+
+  // 3. Helper for Special
   const addSpecial = (id: BodyId, longitude: number) => {
+      if (!requested.has(id)) return;
       const signData = getSignData(longitude);
       bodies.push({
           id,
@@ -84,14 +108,24 @@ export function calculatePlanets(
       });
   };
 
-  const meanNode = bodies.find(b => b.id === BodyId.MeanNode)!;
-  addSpecial(BodyId.SouthNode, (meanNode.longitude + 180) % 360);
-  addSpecial(BodyId.Vertex, angles.Vertex ?? 0);
-  addSpecial(BodyId.AntiVertex, ((angles.Vertex ?? 0) + 180) % 360);
+  // 4. Derived Bodies
+  if (requested.has(BodyId.SouthNode) && posCache.has(BodyId.MeanNode)) {
+      const meanNode = posCache.get(BodyId.MeanNode)!;
+      addSpecial(BodyId.SouthNode, (meanNode.longitude + 180) % 360);
+  }
   
-  const sun = bodies.find(b => b.id === BodyId.Sun)!;
-  const moon = bodies.find(b => b.id === BodyId.Moon)!;
-  addSpecial(BodyId.ParsFortunae, (angles.Asc + moon.longitude - sun.longitude + 360) % 360);
+  if (requested.has(BodyId.Vertex)) {
+      addSpecial(BodyId.Vertex, angles.Vertex ?? 0);
+  }
+  if (requested.has(BodyId.AntiVertex)) {
+      addSpecial(BodyId.AntiVertex, ((angles.Vertex ?? 0) + 180) % 360);
+  }
+
+  if (requested.has(BodyId.ParsFortunae) && posCache.has(BodyId.Sun) && posCache.has(BodyId.Moon)) {
+      const sun = posCache.get(BodyId.Sun)!;
+      const moon = posCache.get(BodyId.Moon)!;
+      addSpecial(BodyId.ParsFortunae, (angles.Asc + moon.longitude - sun.longitude + 360) % 360);
+  }
 
   return bodies;
 }

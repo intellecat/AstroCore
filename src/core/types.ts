@@ -143,7 +143,7 @@ export interface ChartData {
     zodiacType: ZodiacType;
     siderealMode?: SiderealMode;
     perspective: Perspective;
-    includeBodies?: BodyId[];
+    bodies?: BodyId[];
   }
 }
 
@@ -167,4 +167,19 @@ export const ZODIAC_SIGNS: ZodiacSign[] = [
   { name: 'Capricorn', element: 'Earth', quality: 'Cardinal', emoji: '♑︎' },
   { name: 'Aquarius', element: 'Air', quality: 'Fixed', emoji: '♒︎' },
   { name: 'Pisces', element: 'Water', quality: 'Mutable', emoji: '♓︎' },
+];
+
+/**
+ * Default list of planetary bodies included in calculations.
+ * Full list of available BodyIds:
+ * Basic: Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto
+ * Nodes: TrueNode, MeanNode, SouthNode
+ * Apogees: LilithMean, LilithTrue
+ * Points: Vertex, AntiVertex, ParsFortunae
+ * Asteroids: Chiron
+ */
+export const DEFAULT_PLANETS: BodyId[] = [
+  BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
+  BodyId.Jupiter, BodyId.Saturn, BodyId.Uranus, BodyId.Neptune, BodyId.Pluto,
+  BodyId.TrueNode, BodyId.LilithMean, BodyId.Chiron
 ];

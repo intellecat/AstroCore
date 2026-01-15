@@ -7,16 +7,14 @@ import { GeoLocation, BodyId } from './core/types.js';
 export interface ChartDataInput {
   date: string | Date;
   location: GeoLocation;
-  includeBodies?: BodyId[];
+  bodies?: BodyId[]; // Renamed from includeBodies
 }
 
 /**
  * Creates a standard Natal Chart SVG.
  */
 export function natalChart(input: ChartDataInput): string {
-  const chart = calculateChart({ ...input, aspectBodies: input.includeBodies });
-  // Currently renderers use hardcoded ChartDefinitions. 
-  // We should update the natal-renderer.ts to pass includeBodies to the planetRing component.
+  const chart = calculateChart(input);
   return renderChart(chart);
 }
 
@@ -24,14 +22,14 @@ export function natalChart(input: ChartDataInput): string {
  * Creates a Transit Chart SVG.
  */
 export function transitChart(natalInput: ChartDataInput, transitInput?: ChartDataInput): string {
-  const natal = calculateChart({ ...natalInput, aspectBodies: natalInput.includeBodies });
+  const natal = calculateChart(natalInput);
   
   const tInput = transitInput || { 
     date: new Date(), 
     location: natalInput.location,
-    includeBodies: natalInput.includeBodies
+    bodies: natalInput.bodies
   };
-  const transit = calculateChart({ ...tInput, aspectBodies: tInput.includeBodies });
+  const transit = calculateChart(tInput);
   
   return renderTransitChart(natal, transit);
 }
@@ -40,8 +38,8 @@ export function transitChart(natalInput: ChartDataInput, transitInput?: ChartDat
  * Creates a Synastry Chart SVG.
  */
 export function synastryChart(personA: ChartDataInput, personB: ChartDataInput): string {
-  const chartA = calculateChart({ ...personA, aspectBodies: personA.includeBodies });
-  const chartB = calculateChart({ ...personB, aspectBodies: personB.includeBodies });
+  const chartA = calculateChart(personA);
+  const chartB = calculateChart(personB);
   
   return renderSynastryChart(chartA, chartB);
 }

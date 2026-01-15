@@ -72,7 +72,16 @@ describe('New Features Compliance', () => {
   it('calculates special points (Pars Fortunae, Lilith)', () => {
     const chart = calculateChart({
       date: '2026-01-01T12:00:00Z',
-      location: { latitude: 51.5, longitude: 0 }
+      location: { latitude: 51.5, longitude: 0 },
+      bodies: [
+        BodyId.Sun, 
+        BodyId.Moon, 
+        BodyId.MeanNode, 
+        BodyId.ParsFortunae, 
+        BodyId.LilithMean, 
+        BodyId.SouthNode, 
+        BodyId.Vertex
+      ]
     });
 
     const pf = chart.bodies.find(b => b.id === BodyId.ParsFortunae);

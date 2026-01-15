@@ -116,14 +116,12 @@ registerComponent('planetRing', (ctx, config) => {
 // Aspect Lines
 registerComponent('aspectLines', (ctx, config) => {
     let aspects;
-    const MAIN_PLANETS = [
-        BodyId.Sun, BodyId.Moon, BodyId.Mercury, BodyId.Venus, BodyId.Mars,
-        BodyId.Jupiter, BodyId.Saturn, BodyId.Uranus, BodyId.Neptune, BodyId.Pluto
-    ];
-
+    
     if (config.dataSource === 'combined' && ctx.secondary) {
-        const bodiesA = ctx.primary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
-        const bodiesB = ctx.secondary.bodies.filter(b => MAIN_PLANETS.includes(b.id));
+        // For Synastry/Transit, we recalculate aspects between the two charts.
+        // Use all available bodies from primary and secondary
+        const bodiesA = ctx.primary.bodies;
+        const bodiesB = ctx.secondary.bodies;
         aspects = calculateDualAspects(bodiesA, bodiesB); 
     } else {
         aspects = ctx.primary.aspects;

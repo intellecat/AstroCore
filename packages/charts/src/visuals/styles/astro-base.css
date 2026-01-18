@@ -152,6 +152,13 @@ text {
   opacity: 1;
 }
 
+.astro-aspect-conj { stroke: var(--astro-color-aspect-conj); fill: var(--astro-color-aspect-conj); }
+.astro-aspect-opp { stroke: var(--astro-color-aspect-opp); fill: var(--astro-color-aspect-opp); }
+.astro-aspect-trine { stroke: var(--astro-color-aspect-trine); fill: var(--astro-color-aspect-trine); }
+.astro-aspect-square { stroke: var(--astro-color-aspect-square); fill: var(--astro-color-aspect-square); }
+.astro-aspect-sextile { stroke: var(--astro-color-aspect-sextile); fill: var(--astro-color-aspect-sextile); }
+.astro-aspect-minor { stroke: var(--astro-color-aspect-minor); fill: var(--astro-color-aspect-minor); }
+
 /* Semantic Planet Colors */
 .astro-planet-sun { fill: var(--astro-color-sun); stroke: var(--astro-color-sun); }
 .astro-planet-sun .astro-marker { stroke: var(--astro-color-sun); }

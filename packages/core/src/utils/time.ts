@@ -1,5 +1,5 @@
 import { DateTime } from 'luxon';
-import { dateToJulianDay } from '@swisseph/node';
+import { dateToJulianDay } from '../core/swisseph.js';
 
 /**
  * Calculates the Julian Day number for a given date.

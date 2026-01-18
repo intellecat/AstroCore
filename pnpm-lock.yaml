@@ -21,6 +21,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@swisseph/node':
+        specifier: ^1.2.1
+        version: 1.2.1
       '@types/node':
         specifier: ^25.0.3
         version: 25.0.8
@@ -36,13 +39,16 @@ importers:
       '@swisseph/core':
         specifier: ^1.1.0
         version: 1.1.2
-      '@swisseph/node':
-        specifier: ^1.2.0
-        version: 1.2.1
       luxon:
         specifier: ^3.7.2
         version: 3.7.2
     devDependencies:
+      '@swisseph/browser':
+        specifier: ^1.1.0
+        version: 1.1.0
+      '@swisseph/node':
+        specifier: ^1.2.0
+        version: 1.2.1
       '@types/luxon':
         specifier: ^3.7.1
         version: 3.7.1
@@ -344,6 +350,12 @@ packages:
 
   '@standard-schema/spec@1.1.0':
     resolution: {integrity: sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w==}
+
+  '@swisseph/browser@1.1.0':
+    resolution: {integrity: sha512-QRkvl5oN/KUtm8szRGYPfsgUlB7JoskIdwm9coNNSU/guOG+mYxsUFeJOdNF3k1K3B8ZzFmx1BJ4huGuNhtftA==}
+
+  '@swisseph/core@1.0.4':
+    resolution: {integrity: sha512-TBpy9Oe9KcVSa6wxika+kWLp2bElb9+l+MBKB4vnBVcD8tRiv/axtLYGYCGyb7uLFlBUFcuTqHQ33IwfDJmNZQ==}
 
   '@swisseph/core@1.1.2':
     resolution: {integrity: sha512-9rVlQfd0FtTAFNml1RyJLlYE7AoFyoO/6dH5mVwf9VjxE/5GPHkN+RznOyZP2VouPsY1Hmy5OR6WQ6LhvUHL+w==}
@@ -747,6 +759,12 @@ snapshots:
     optional: true
 
   '@standard-schema/spec@1.1.0': {}
+
+  '@swisseph/browser@1.1.0':
+    dependencies:
+      '@swisseph/core': 1.0.4
+
+  '@swisseph/core@1.0.4': {}
 
   '@swisseph/core@1.1.2': {}
 

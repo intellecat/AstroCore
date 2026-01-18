@@ -12,8 +12,15 @@ pnpm install @astrologer/charts @astrologer/astro-core
 
 The simplest way to use the library is via the high-level factory functions.
 
+**Note:** You must initialize the core library with an ephemeris engine first.
+
 ```typescript
 import { natalChart, transitChart, synastryChart } from '@astrologer/charts';
+import { setSwissEphemeris } from '@astrologer/astro-core';
+import * as swe from '@swisseph/node'; // or @swisseph/browser
+
+// Initialize Core
+setSwissEphemeris(swe);
 
 const input = {
   date: '2026-01-01T12:00:00Z',
@@ -89,7 +96,10 @@ For full control over the layout (radii, rings, components), use the `createChar
 
 ```typescript
 import { createChart, ChartDefinition } from '@astrologer/charts/src/visuals/core/engine';
-import { calculateChart } from '@astrologer/astro-core';
+import { calculateChart, setSwissEphemeris } from '@astrologer/astro-core';
+import * as swe from '@swisseph/node';
+
+setSwissEphemeris(swe);
 
 const data = calculateChart({ ... });
 

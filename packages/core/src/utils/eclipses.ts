@@ -1,7 +1,7 @@
 import { 
     findNextSolarEclipse, 
     findNextLunarEclipse,
-} from '@swisseph/node';
+} from '../core/swisseph.js';
 import { getJulianDay } from './time.js';
 import { DateTime } from 'luxon';
 

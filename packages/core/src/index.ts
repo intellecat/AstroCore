@@ -11,3 +11,5 @@ export * from './utils/eclipses.js';
 export * from './ephemeris-generator.js';
 export * from './analysis/distribution.js';
 export * from './analysis/relationship.js';
+export { setSwissEphemeris } from './core/swisseph.js';
+export { CalculationFlag, Planet, Asteroid } from '@swisseph/core';

@@ -12,6 +12,7 @@
     "@astrologer/astro-core": "workspace:*"
   },
   "devDependencies": {
+    "@swisseph/node": "^1.2.1",
     "@types/node": "^25.0.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.16"

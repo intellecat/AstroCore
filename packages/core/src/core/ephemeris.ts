@@ -4,7 +4,7 @@ import {
   dateToJulianDay,
   setSiderealMode,
   setTopocentric
-} from '@swisseph/node';
+} from './swisseph.js';
 import { 
   Planet, 
   Asteroid, 

@@ -10,10 +10,23 @@
   },
   "dependencies": {
     "@swisseph/core": "^1.1.0",
-    "@swisseph/node": "^1.2.0",
     "luxon": "^3.7.2"
   },
+  "peerDependencies": {
+    "@swisseph/node": "^1.2.0",
+    "@swisseph/browser": "^1.1.0"
+  },
+  "peerDependenciesMeta": {
+    "@swisseph/node": {
+      "optional": true
+    },
+    "@swisseph/browser": {
+      "optional": true
+    }
+  },
   "devDependencies": {
+    "@swisseph/node": "^1.2.0",
+    "@swisseph/browser": "^1.1.0",
     "@types/luxon": "^3.7.1",
     "@types/node": "^25.0.3",
     "typescript": "^5.9.3",

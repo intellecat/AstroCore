@@ -14,6 +14,29 @@ A **functional**, high-precision astrological calculation library powered by Swi
 pnpm install @astrologer/astro-core
 ```
 
+## Initialization
+
+Before performing any calculations, you must initialize the library with the appropriate Swiss Ephemeris adapter.
+
+### Node.js
+```typescript
+import { setSwissEphemeris } from '@astrologer/astro-core';
+import * as swe from '@swisseph/node';
+
+// Initialize with the Node.js adapter
+setSwissEphemeris(swe);
+```
+
+### Browser
+```typescript
+import { setSwissEphemeris } from '@astrologer/astro-core';
+import { SwissEphemeris } from '@swisseph/browser';
+
+const swe = new SwissEphemeris();
+await swe.init(); // WASM initialization
+setSwissEphemeris(swe);
+```
+
 ## Main API
 
 ### `calculateChart(input: ChartInput): ChartData`

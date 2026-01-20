@@ -22,3 +22,26 @@ export function drawLineMarker(start: Point, target: Point, length: number, cent
                 x2="${endX}" y2="${endY}" 
                 class="astro-marker" />`;
 }
+
+/**
+ * Draws a marker radially from the start point towards (or away from) the center,
+ * ignoring the angular shift of the target.
+ * Useful when you want the tick to stay at the exact degree, even if the symbol is moved.
+ */
+export function drawRadialMarker(start: Point, target: Point, length: number, center: Point): string {
+  const startDist = Math.hypot(start.x - center.x, start.y - center.y);
+  const targetDist = Math.hypot(target.x - center.x, target.y - center.y);
+  
+  // Angle from center to start point
+  const angle = Math.atan2(start.y - center.y, start.x - center.x);
+  
+  // Determine direction: -1 (inwards) if target is closer to center, 1 (outwards) otherwise
+  const direction = targetDist < startDist ? -1 : 1;
+  
+  const endX = start.x + (Math.cos(angle) * length * direction);
+  const endY = start.y + (Math.sin(angle) * length * direction);
+  
+  return `<line x1="${start.x}" y1="${start.y}" 
+                x2="${endX}" y2="${endY}" 
+                class="astro-marker" />`;
+}

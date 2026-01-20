@@ -1,6 +1,7 @@
 import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 import { resolveSynastryCollisions } from '../collision_synastry.js';
+import { MarkerRenderer, drawRadialMarker } from './Markers.js';
 
 const UNICODE_MAP: Record<string, string> = {
   [BodyId.Sun]: '☉', [BodyId.Moon]: '☽', [BodyId.Mercury]: '☿', [BodyId.Venus]: '♀', [BodyId.Mars]: '♂',
@@ -27,11 +28,13 @@ export function drawStackedPlanetRing(
   cy: number,
   planets: CelestialPosition[],
   rotationOffset: number,
-  layout: StackedRingLayout
+  layout: StackedRingLayout,
+  options: { markerRenderer?: MarkerRenderer } = {}
 ): string {
   let svg = '<g class="stacked-planet-ring">';
 
   const adjusted = resolveSynastryCollisions(planets, 6);
+  const markerRenderer = options.markerRenderer || drawRadialMarker;
 
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
@@ -43,15 +46,12 @@ export function drawStackedPlanetRing(
     const symPos = polarToCartesian(cx, cy, r, adj.adjustedLongitude, rotationOffset);
     
     const markerStartPos = polarToCartesian(cx, cy, layout.tickStartRadius, adj.originalLongitude, rotationOffset);
-    const markerEndPos = polarToCartesian(cx, cy, layout.tickStartRadius - layout.tickLength, adj.originalLongitude, rotationOffset);
-
+    
     // Group Content
     let groupContent = '';
 
-    // Draw Tick
-    groupContent += `<line x1="${markerStartPos.x}" y1="${markerStartPos.y}" 
-                  x2="${markerEndPos.x}" y2="${markerEndPos.y}" 
-                  class="astro-marker" />`;
+    // Draw Tick using Renderer
+    groupContent += markerRenderer(markerStartPos, symPos, layout.tickLength, { x: cx, y: cy });
 
     // Symbol
     groupContent += `<text x="${symPos.x}" y="${symPos.y}" 

@@ -71,6 +71,11 @@ export function drawPlanetRing(
         groupContent += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" class="astro-planet-indicator">${indicator}</text>`;
     }
 
+    // Retrograde Indicator (r)
+    if (planet.isRetrograde) {
+        groupContent += `<text x="${symPos.x + 6}" y="${symPos.y + 2}" font-size="0.6em" class="astro-planet-retrograde">r</text>`;
+    }
+
     // Degree Text
     const textPos = polarToCartesian(cx, cy, config.degreeRadius, adj.adjustedLongitude, rotationOffset);
     groupContent += `<text x="${textPos.x}" y="${textPos.y}" 
@@ -80,7 +85,7 @@ export function drawPlanetRing(
     if (config.showZodiacSign) {
         const signData = ZODIAC_SIGNS.find(z => z.name === planet.sign);
         if (signData) {
-             const signR = config.zodiacSignRadius ?? (config.degreeRadius > config.symbolRadius ? config.degreeRadius + 15 : config.degreeRadius - 15);
+             const signR = config.zodiacSignRadius ?? (config.degreeRadius > config.symbolRadius ? config.degreeRadius + 18 : config.degreeRadius - 18);
              const signPos = polarToCartesian(cx, cy, signR, adj.adjustedLongitude, rotationOffset);
              groupContent += `<text x="${signPos.x}" y="${signPos.y}" class="astro-planet-zodiac">${signData.emoji}</text>`;
         }
@@ -92,10 +97,10 @@ export function drawPlanetRing(
         
         let defaultMinuteBase = config.degreeRadius;
         if (config.showZodiacSign) {
-             defaultMinuteBase = config.zodiacSignRadius ?? (config.degreeRadius > config.symbolRadius ? config.degreeRadius + 15 : config.degreeRadius - 15);
+             defaultMinuteBase = config.zodiacSignRadius ?? (config.degreeRadius > config.symbolRadius ? config.degreeRadius + 18 : config.degreeRadius - 18);
         }
         
-        const offset = (config.degreeRadius > config.symbolRadius) ? 15 : -15;
+        const offset = (config.degreeRadius > config.symbolRadius) ? 18 : -18;
         const minR = config.minuteRadius ?? (defaultMinuteBase + offset);
         const minPos = polarToCartesian(cx, cy, minR, adj.adjustedLongitude, rotationOffset);
         

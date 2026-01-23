@@ -7,6 +7,7 @@ export interface HouseLinesConfig {
     showLabels?: boolean;
     labelRadius?: number;
     angleLabelRadius?: number;
+    degreeLabelRadius?: number;
 }
 
 export function drawHouseLines(
@@ -53,7 +54,8 @@ export function drawHouseLines(
             const labelPos = polarToCartesian(cx, cy, config.angleLabelRadius, house.longitude, rotationOffset);
             svg += `<text x="${labelPos.x}" y="${labelPos.y}" class="astro-angle-label">${label}</text>`;
             
-            const degPos = polarToCartesian(cx, cy, config.angleLabelRadius - 15, house.longitude, rotationOffset);
+            const degR = config.degreeLabelRadius ?? (config.angleLabelRadius - 15);
+            const degPos = polarToCartesian(cx, cy, degR, house.longitude, rotationOffset);
             svg += `<text x="${degPos.x}" y="${degPos.y}" class="astro-angle-degree">${Math.floor(house.degree)}°</text>`;
         }
 

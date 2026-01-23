@@ -52,7 +52,8 @@ registerComponent('houseLines', (ctx, config) => {
         endRadius: config.props?.endRadius ?? (ctx.radius - 40),
         showLabels: config.props?.showLabels,
         labelRadius: config.props?.labelRadius,
-        angleLabelRadius: config.props?.angleLabelRadius ?? (ctx.radius * 0.45)
+        angleLabelRadius: config.props?.angleLabelRadius ?? (ctx.radius * 0.45),
+        degreeLabelRadius: config.props?.degreeLabelRadius
     };
 
     return drawHouseLines(ctx.cx, ctx.cy, dataSource.houses, ctx.rotationOffset, c);

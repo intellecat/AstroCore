@@ -14,6 +14,7 @@ export interface ComponentConfig {
 export interface ChartDefinition {
   width?: number;
   height?: number;
+  rotationOffset?: number; // Optional override
   themes?: string[]; // Array of filenames or paths
   components: ComponentConfig[];
 }
@@ -63,7 +64,7 @@ export function createChart(
     cx,
     cy,
     radius,
-    rotationOffset: getAscendantOffset(primaryData.angles.Asc)
+    rotationOffset: definition.rotationOffset ?? getAscendantOffset(primaryData.angles.Asc)
   };
 
   const svgParts: string[] = [];

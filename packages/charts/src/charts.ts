@@ -1,5 +1,6 @@
 import { calculateChart } from '@astrologer/astro-core';
 import { renderChart } from './visuals/natal-renderer.js';
+import { renderNoonChart } from './visuals/noon-renderer.js';
 import { renderTransitChart } from './visuals/transit-renderer.js';
 import { renderSynastryChart } from './visuals/synastry-renderer.js';
 import { GeoLocation, BodyId } from '@astrologer/astro-core';
@@ -16,6 +17,14 @@ export interface ChartDataInput {
 export function natalChart(input: ChartDataInput): string {
   const chart = calculateChart(input);
   return renderChart(chart);
+}
+
+/**
+ * Creates a Noon Chart SVG (Unknown birth time).
+ */
+export function noonChart(input: ChartDataInput): string {
+  const chart = calculateChart(input);
+  return renderNoonChart(chart);
 }
 
 /**

@@ -2,14 +2,7 @@ import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId, HouseCusp, ZODIAC_SIGNS } from '@astrologer/astro-core';
 import { resolveCollisions } from '../collision.js';
 import { MarkerRenderer, drawLineMarker } from './Markers.js';
-
-const UNICODE_MAP: Record<string, string> = {
-  [BodyId.Sun]: '☉', [BodyId.Moon]: '☽', [BodyId.Mercury]: '☿', [BodyId.Venus]: '♀', [BodyId.Mars]: '♂',
-  [BodyId.Jupiter]: '♃', [BodyId.Saturn]: '♄', [BodyId.Uranus]: '♅', [BodyId.Neptune]: '♆', [BodyId.Pluto]: '♇',
-  [BodyId.Chiron]: '⚷', [BodyId.MeanNode]: '☊', [BodyId.TrueNode]: '☊', [BodyId.SouthNode]: '☋',
-  [BodyId.LilithMean]: '⚸', [BodyId.LilithTrue]: '⚸', [BodyId.ParsFortunae]: '⊗',
-  [BodyId.Vertex]: 'Vx', [BodyId.AntiVertex]: 'Av',
-};
+import { drawPlanetSymbol } from './PlanetSymbol.js';
 
 function getBodyClass(id: string): string {
     return 'astro-planet-' + id.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
@@ -49,7 +42,6 @@ export function drawPlanetRing(
 
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
-    const char = UNICODE_MAP[planet.id] || '?';
     const planetClass = getBodyClass(planet.id);
 
     const symPos = polarToCartesian(cx, cy, config.symbolRadius, adj.adjustedLongitude, rotationOffset);
@@ -60,21 +52,12 @@ export function drawPlanetRing(
 
     let groupContent = markerSvg;
 
-    // Symbol
-    groupContent += `<text x="${symPos.x}" y="${symPos.y}" 
-                  font-size="${fontSize}"
-                  class="astro-planet-symbol">${char}</text>`;
-    
-    // m/t indicators
-    if (planet.id.includes('Mean') || planet.id.includes('True')) {
-        const indicator = planet.id.includes('Mean') ? 'm' : 't';
-        groupContent += `<text x="${symPos.x + 8}" y="${symPos.y - 8}" class="astro-planet-indicator">${indicator}</text>`;
-    }
-
-    // Retrograde Indicator (r)
-    if (planet.isRetrograde) {
-        groupContent += `<text x="${symPos.x + 6}" y="${symPos.y + 2}" font-size="0.6em" class="astro-planet-retrograde">r</text>`;
-    }
+    // Symbol using shared renderer
+    groupContent += drawPlanetSymbol(planet, {
+        x: symPos.x,
+        y: symPos.y,
+        fontSize: fontSize
+    });
 
     // Degree Text
     const textPos = polarToCartesian(cx, cy, config.degreeRadius, adj.adjustedLongitude, rotationOffset);

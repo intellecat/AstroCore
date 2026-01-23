@@ -2,14 +2,7 @@ import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 import { resolveSynastryCollisions } from '../collision_synastry.js';
 import { MarkerRenderer, drawRadialMarker } from './Markers.js';
-
-const UNICODE_MAP: Record<string, string> = {
-  [BodyId.Sun]: '☉', [BodyId.Moon]: '☽', [BodyId.Mercury]: '☿', [BodyId.Venus]: '♀', [BodyId.Mars]: '♂',
-  [BodyId.Jupiter]: '♃', [BodyId.Saturn]: '♄', [BodyId.Uranus]: '♅', [BodyId.Neptune]: '♆', [BodyId.Pluto]: '♇',
-  [BodyId.Chiron]: '⚷', [BodyId.MeanNode]: '☊', [BodyId.TrueNode]: '☊', [BodyId.SouthNode]: '☋',
-  [BodyId.LilithMean]: '⚸', [BodyId.LilithTrue]: '⚸', [BodyId.ParsFortunae]: '⊗',
-  [BodyId.Vertex]: 'Vx', [BodyId.AntiVertex]: 'Av',
-};
+import { drawPlanetSymbol } from './PlanetSymbol.js';
 
 // Helper to convert BodyId to CSS class suffix
 function getBodyClass(id: string): string {
@@ -38,7 +31,6 @@ export function drawStackedPlanetRing(
 
   adjusted.forEach(adj => {
     const planet = planets.find(p => p.id === adj.id)!;
-    const char = UNICODE_MAP[planet.id] || '?';
     
     const planetClass = getBodyClass(planet.id);
     
@@ -53,15 +45,12 @@ export function drawStackedPlanetRing(
     // Draw Tick using Renderer
     groupContent += markerRenderer(markerStartPos, symPos, layout.tickLength, { x: cx, y: cy });
 
-    // Symbol
-    groupContent += `<text x="${symPos.x}" y="${symPos.y}" 
-                  font-size="18" 
-                  class="astro-planet-symbol">${char}</text>`;
-    
-    if (planet.id.includes('Mean') || planet.id.includes('True')) {
-        const indicator = planet.id.includes('Mean') ? 'm' : 't';
-        groupContent += `<text x="${symPos.x + 7}" y="${symPos.y - 7}" font-size="7" class="astro-planet-indicator">${indicator}</text>`;
-    }
+    // Symbol using shared renderer
+    groupContent += drawPlanetSymbol(planet, {
+        x: symPos.x,
+        y: symPos.y,
+        fontSize: 18
+    });
     
     // Wrap in Semantic Group
     svg += `<g class="${planetClass}">${groupContent}</g>`;

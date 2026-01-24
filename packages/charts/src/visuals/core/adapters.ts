@@ -13,10 +13,12 @@ import { ChartData, BodyId } from '@astrologer/astro-core';
 // Background Circle
 registerComponent('circle', (ctx, config) => {
   const r = config.props?.radius ?? ctx.radius;
+  const className = config.props?.className ? `class="${config.props.className}"` : '';
   return `<circle cx="${ctx.cx}" cy="${ctx.cy}" r="${r}" 
+            ${className}
             fill="${config.props?.fill ?? 'none'}" 
             stroke="${config.props?.stroke ?? 'var(--astro-color-text)'}" 
-            stroke-opacity="${config.props?.strokeOpacity ?? 0.1}" />`;
+            stroke-opacity="${config.props?.strokeOpacity ?? 1}" />`;
 });
 
 // Zodiac Wheel

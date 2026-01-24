@@ -27,7 +27,7 @@ export function renderChart(chart: ChartData): string {
           radius: mainRadius * 0.5,
           angleLabelRadius: mainRadius * 0.45
       } },
-      { type: 'circle', props: { radius: mainRadius * 0.4, stroke: 'var(--astro-color-text)', strokeOpacity: 0.1 } },
+      { type: 'circle', props: { radius: mainRadius * 0.4, className: 'astro-inner-ring', stroke: 'var(--astro-color-text)' } },
       { type: 'planetRing', props: { 
           symbolRadius: mainRadius - 75,
           degreeRadius: mainRadius - 95,

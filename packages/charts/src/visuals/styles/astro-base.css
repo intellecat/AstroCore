@@ -11,7 +11,7 @@ text {
 .astro-zodiac-ring {
   fill: none;
   stroke: var(--astro-color-text);
-  stroke-opacity: 0.2;
+  stroke-opacity: 0.4;
   stroke-width: 1px;
 }
 .astro-zodiac-line {
@@ -51,12 +51,13 @@ text {
 .astro-house-ring {
   fill: none;
   stroke: var(--astro-color-text);
-  stroke-opacity: 0.1;
+  stroke-width: 0.5px;
+  stroke-opacity: 0.5;
 }
 .astro-house-line {
   stroke: var(--astro-color-text);
   stroke-width: 0.8px;
-  opacity: 0.2;
+  opacity: 0.5;
   stroke-dasharray: 3,3;
 }
 .astro-house-line.angle {
@@ -84,7 +85,7 @@ text {
 }
 .astro-angle-degree {
   fill: var(--astro-color-text);
-  font-size: 7px;
+  font-size: 9px;
   text-anchor: middle;
   dominant-baseline: middle;
   opacity: 0.8;
@@ -111,27 +112,32 @@ text {
   stroke: none;
 }
 .astro-planet-degree {
-  font-size: 10px;
+  font-size: 14px;
   text-anchor: middle;
   dominant-baseline: middle;
   opacity: 0.6;
   stroke: none;
 }
 .astro-planet-zodiac {
-  font-size: 10px;
+  font-size: 14px;
   text-anchor: middle;
   dominant-baseline: middle;
   opacity: 0.8;
   stroke: none;
 }
 .astro-planet-minute {
-  font-size: 8px;
+  font-size: 12px;
   text-anchor: middle;
   dominant-baseline: middle;
   opacity: 0.5;
   stroke: none;
 }
 
+.astro-inner-ring {
+  stroke: var(--astro-color-text);
+  stroke-width: 0.5px;
+  opacity: 0.5;
+}
 /* Markers */
 .astro-marker {
   stroke-width: 0.8px; 

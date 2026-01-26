@@ -1,6 +1,6 @@
 import { polarToCartesian } from '../geometry.js';
 import { CelestialPosition, BodyId } from '@astrologer/astro-core';
-import { resolveSynastryCollisions } from '../collision_synastry.js';
+import { resolveStackedCollisions } from '../collision_stacked.js';
 import { MarkerRenderer, drawRadialMarker } from './Markers.js';
 import { drawPlanetSymbol } from './PlanetSymbol.js';
 
@@ -21,12 +21,13 @@ export function drawStackedPlanetRing(
   cy: number,
   planets: CelestialPosition[],
   rotationOffset: number,
-  layout: StackedRingLayout,
+  layout: StackedRingLayout & { maxTracks?: number },
   options: { markerRenderer?: MarkerRenderer } = {}
 ): string {
   let svg = '<g class="stacked-planet-ring">';
 
-  const adjusted = resolveSynastryCollisions(planets, 6);
+  const maxTracks = layout.maxTracks ?? 2;
+  const adjusted = resolveStackedCollisions(planets, 6, maxTracks);
   const markerRenderer = options.markerRenderer || drawRadialMarker;
 
   adjusted.forEach(adj => {

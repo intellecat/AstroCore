@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { resolveSynastryCollisions } from '../src/visuals/collision_synastry.js';
+import { resolveStackedCollisions } from '../src/visuals/collision_stacked.js';
 import { CelestialPosition, BodyId } from '@astrologer/astro-core';
 
-describe('Synastry Collision Resolver', () => {
+describe('Stacked Collision Resolver', () => {
   it('stacks close planets radially', () => {
     // Two planets at same degree
     const planets: Partial<CelestialPosition>[] = [
@@ -10,7 +10,7 @@ describe('Synastry Collision Resolver', () => {
       { id: BodyId.Moon, longitude: 100 }
     ];
 
-    const adjusted = resolveSynastryCollisions(planets as CelestialPosition[], 6);
+    const adjusted = resolveStackedCollisions(planets as CelestialPosition[], 6);
 
     // Should have same(ish) longitude but different tracks
     expect(adjusted[0].adjustedLongitude).toBeCloseTo(100, 1);
@@ -29,7 +29,7 @@ describe('Synastry Collision Resolver', () => {
       { id: 'P3', longitude: 100 },
     ] as any as CelestialPosition[];
 
-    const adjusted = resolveSynastryCollisions(planets as CelestialPosition[], 6);
+    const adjusted = resolveStackedCollisions(planets as CelestialPosition[], 6);
 
     const p1 = adjusted[0];
     const p2 = adjusted[1];
@@ -47,5 +47,19 @@ describe('Synastry Collision Resolver', () => {
     
     const dist = Math.abs(crowdedTrack[0].adjustedLongitude - crowdedTrack[1].adjustedLongitude);
     expect(dist).toBeGreaterThan(5); // Lateral spread applied
+  });
+
+  it('supports more than 2 tracks', () => {
+    const planets: Partial<CelestialPosition>[] = [
+      { id: 'P1', longitude: 100 },
+      { id: 'P2', longitude: 100 },
+      { id: 'P3', longitude: 100 },
+    ] as any as CelestialPosition[];
+
+    // With 3 tracks, each should get its own track
+    const adjusted = resolveStackedCollisions(planets as CelestialPosition[], 6, 3);
+    
+    const tracks = adjusted.map(p => p.radialOffset).sort();
+    expect(tracks).toEqual([0, 1, 2]);
   });
 });

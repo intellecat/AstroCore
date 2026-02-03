@@ -3,10 +3,11 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "composite": true
+    "composite": true,
+    "declaration": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "tests"],
+  "exclude": ["node_modules", "tests", "src/test_*.ts"],
   "references": [
     { "path": "../core" }
   ]
